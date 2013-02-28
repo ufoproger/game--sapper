@@ -1,0 +1,26 @@
+body, html
+{
+}
+
+.field_item
+{
+    width: 16px;
+    height: 16px;
+    background: url(field_items.png);
+    float: left;
+}
+
+.mine_count_1
+{
+    background-position: -32px 0px;
+}
+
+.mine_count_2
+{
+    background-position: -48px 0px;
+}
+
+.mine_empty
+{
+    background-position: 0px 0px;
+}
