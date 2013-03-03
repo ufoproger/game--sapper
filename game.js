@@ -1,41 +1,25 @@
-function InitGame ()
+function Game (_id)
 {
-   $("#game").append($("<div />", {id: "game_field"}));
-    $("#game_field").append($("<div />").addClass("field_item").addClass("mine_count_1"));
-    $("#game_field").append($("<div />").addClass("field_item").addClass("mine_count_2"));
-    $("#game_field").append($("<div />").css("clear", "both"));
-    $("#game_field").append($("<div />").addClass("field_item").addClass("mine_count_1"));
+    var id = _id.toString();
+    var width = 10;
+    var height = 10;
+    var mine_count = 10;
 
-
-
-    var newDiv1 = $(document.createElement("div")).addClass("field_item").addClass("mine_count_1");
-    var newDiv2 = $(document.createElement("div")).addClass("field_item").addClass("mine_count_2");
-    var newDiv3 = $(document.createElement("div")).css("clear", "both");
-    var newDiv4 = $(document.createElement("div")).addClass("field_item").addClass("mine_empty");
-
-/*
-    for (i = 0; i < 6; ++i)
+    init = function ()
     {
-        $("#game").append($(document.createElement("div")).addClass("field_item").addClass("mine_empty"));
+        $(id).append($("<div />", {id: "game_sapper"}));
+        $("#game_sapper").append($("<div />", {id: "field"}));
 
-        if (i == 4)
-            $("#game").append($(document.createElement("div")).css("clear", "both"));
+        var mineTypes = new Array("mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5", "mine_count_6", "mine_count_7", "mine_count_8", "mine_empty", "mine_empty_checked", "mine", "mine_checked");
+
+        for (var i = 0; i < height; ++i)
+        {
+            for (var j = 0; j < width; ++j)
+                $("#field").append($("<div />").addClass("field_item").addClass(mineTypes[Math.floor(Math.random() * 100) % 12]));
+
+            $("#field").append($("<div />").css("clear", "both"));
+        }
     }
 
-    $("#game").append(newDiv1, newDiv2, newDiv4, newDiv3);    for (i = 0; i < 6; ++i)
-{
-    $("#game").append($(document.createElement("div")).addClass("field_item").addClass("mine_empty"));
-
-    if (i == 4)
-        $("#game").append($(document.createElement("div")).css("clear", "both"));
-}
-  //  var $newDiv2 = document.createElement("div");
- //   $(newDiv1).add("div").addClass("field_item").addClass("mine_count_1");
-//    $($newDiv2).add("div").addClass("field_item").addClass("mine_count_2").appendTo($("#game"));
-//    $("#game").append(newDiv1);
-      //$("#game").append('<div class="field_item mine_count_1"></div>');
-  //  $("#game").append(newDiv2);
-  */ // newDiv.add add("field_item");
-   // $("#game").append(newDiv);
-//    $("#game").add("div").addClass("field_item").addClass("mine_count_1");
+    init();
 }

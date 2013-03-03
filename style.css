@@ -2,6 +2,18 @@ body, html
 {
 }
 
+#game_sapper
+{
+    background-color: #c0c0c0;
+    padding: 5px;
+    float: left;
+}
+
+#field
+{
+    border: 3px inset white;
+}
+
 .field_item
 {
     width: 16px;
@@ -20,7 +32,52 @@ body, html
     background-position: -48px 0px;
 }
 
+.mine_count_3
+{
+    background-position: -64px 0px;
+}
+
+.mine_count_4
+{
+    background-position: -80px 0px;
+}
+
+.mine_count_5
+{
+    background-position: -96px 0px;
+}
+
+.mine_count_6
+{
+    background-position: -112px 0px;
+}
+
+.mine_count_7
+{
+    background-position: -128px 0px;
+}
+
+.mine_count_8
+{
+    background-position: -144px 0px;
+}
+
 .mine_empty
 {
     background-position: 0px 0px;
+}
+
+.mine_empty_checked
+{
+    background-position: -16px 0px;
+}
+
+.mine
+{
+    background-position: -160px 0px;
+}
+
+.mine_checked
+{
+    background-position: -176px 0px;
 }
