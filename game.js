@@ -15,10 +15,26 @@ function Game (_id)
         for (var i = 0; i < height; ++i)
         {
             for (var j = 0; j < width; ++j)
-                $("#field").append($("<div />").addClass("field_item").addClass(mineTypes[Math.floor(Math.random() * 100) % 12]));
+                $("#field").append($("<div />", {x: i, y: j, id: "mine_" + i.toString() + "_" + j.toString()}).addClass("field_item").addClass(mineTypes[Math.floor(Math.random() * 100) % 12]));
 
             $("#field").append($("<div />").css("clear", "both"));
         }
+
+        $(".field_item").click(function (e)
+        {
+            if (this == e.target)
+            {
+                x = $(e.target).attr("x");
+                y = $(e.target).attr("y");
+
+                onMineClick(x, y);
+            }
+        });
+    }
+
+    onMineClick = function (x, y)
+    {
+        $(".field_item[x=" + x + "][y=" + y + "]").addClass("mine_empty");
     }
 
     init();
