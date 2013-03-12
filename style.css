@@ -72,6 +72,11 @@ body, html
     background-position: -16px 0px;
 }
 
+.mine_empty_checked_temp
+{
+    background-position: -16px 0px;
+}
+
 .mine
 {
     background-position: -160px 0px;
@@ -80,4 +85,14 @@ body, html
 .mine_checked
 {
     background-position: -176px 0px;
+}
+
+.mine_flag
+{
+    background-position: -192px 0px;
+}
+
+.mine_question
+{
+    background-position: -208px 0px;
 }
