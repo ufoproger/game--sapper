@@ -2,6 +2,25 @@ body, html
 {
 }
 
+#settings
+{
+    float: left;
+    width: 200px;
+    margin-left: 10px;
+    font-size: 0.9em;
+}
+
+#slider
+{
+    margin: 2px 10px 10px 10px;
+}
+
+#spinner_height, #spinner_width
+{
+    width: 60px;
+    font-size: 0.8em;
+}
+
 #game_sapper
 {
     background-color: #c0c0c0;
@@ -11,6 +30,7 @@ body, html
 
 #field
 {
+    float: left;
     border: 3px inset white;
 }
 

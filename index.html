@@ -3,15 +3,56 @@
 <head>
     <meta charset="utf-8">
     <title>Сапёр</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
     <script type="text/javascript" src="game.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
     <div id="game"></div>
+    <div id="test">
+        <table border="0" width="100%">
+            <tr>
+                <td colspan="2" align="center">
+                   <b> Игра "Сапёр"</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Высота
+                </td>
+                <td width="10%">
+                    <input id="spinner_height" value="10" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Ширина
+                </td>
+                <td>
+                    <input id="spinner_width" value="10" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    На поле расположено <span id="setting_mine_count">?</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="slider"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <button id="button_new_game">Начать новую игру!</button>
+                </td>
+            </tr>
+        </table>
+    </div>
     <script type="text/javascript">
         var game = null;
-
         $.ready()
         {
             game = new Game("#game");

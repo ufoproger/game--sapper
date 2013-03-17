@@ -1,22 +1,31 @@
 function Game (_id)
 {
-    var mineTypes = new Array("mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
+    var mine_types = new Array("mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
         "mine_count_6", "mine_count_7", "mine_count_8", "mine_empty", "mine_empty_checked", "mine", "mine_checked",
         "mine_question", "mine_flag");
 
-    var id = _id.toString();
+    var body = $(_id);
     var width = 10;
     var height = 10;
     var mine_count = 10;
 
-    this.deleteGame = function ()
+    setItemFieldType = function (element, new_type)
     {
-        $("#field").remove(".field_item");
+
+        for (index in mine_types)
+            element.removeClass(mine_types[index]);
+
+        element.addClass(new_type);
     }
 
-    this.startGame = function (_height, _width, _mine_count)
+    deleteGame = function ()
     {
-        this.deleteGame();
+        $("#field > div").remove();
+    }
+
+    startGame = function (_height, _width, _mine_count)
+    {
+        deleteGame();
 
         height = _height;
         width = _width;
@@ -40,6 +49,8 @@ function Game (_id)
 
                 if (e.ctrlKey)
                 {
+                    //element.addClass("mine_flag");
+                    setItemFieldType(element, "mine_flag");
                 }
                 else
                 if (element.hasClass("mine_empty"))
@@ -50,6 +61,9 @@ function Game (_id)
         $(".field_item").mousemove(function (e)
         {
             e.preventDefault();
+
+            if (e.ctrlKey)
+                return;
 
             if (this == e.target)
             {
@@ -66,28 +80,47 @@ function Game (_id)
         $(".field_item").mouseup(function (e)
         {
             e.preventDefault();
-
             $(".field_item").removeClass("mine_empty_checked_temp");
+
+            if (e.ctrlKey)
+                return;
+
             if (this == e.target)
             {
                 var element = $(e.target);
 
-                element.addClass("mine");
+                setItemFieldType(element, "mine");
             }
         });
     }
 
-    this.gameOver = function ()
+    gameOver = function ()
     {
         $(".field_item").off();
     }
 
+    changeSlider = function (e, ui)
+    {
+        $("#setting_mine_count").text(ui.value + " мин");
+    }
+
     init = function ()
     {
-        $(id).append($("<div />", {id: "game_sapper"}));
+        body.append($("<div />", {id: "game_sapper"}));
         $("#game_sapper").append($("<div />", {id: "field"}));
+        $("#game_sapper").append($("<div />", {id: "settings"}));
+        $("#test").children().appendTo($("#settings"));
+        $("#slider").slider({min: 10, max: 20, slide: changeSlider, change: changeSlider});
+        $("#slider").slider("value", mine_count);
+        $("#spinner_height, #spinner_width").spinner({min: 10, max: 20});
+        $("#button_new_game").button();
+
+        $("#button_new_game").click(function ()
+        {
+            startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").val());
+        });
     }
 
     init();
-    this.startGame(10, 10, 10);
+    startGame(height, width, mine_count);
 }
