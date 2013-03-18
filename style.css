@@ -5,7 +5,7 @@ body, html
 #settings
 {
     float: left;
-    width: 200px;
+    width: 220px;
     margin-left: 10px;
     font-size: 0.9em;
 }
@@ -115,4 +115,9 @@ body, html
 .mine_question
 {
     background-position: -208px 0px;
+}
+
+.mine_question_checked_temp
+{
+    background-position: -224px 0px;
 }
