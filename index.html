@@ -51,11 +51,28 @@
             </tr>
         </table>
     </div>
+    <div id="test_digit"></div>
+    <div style="clear: both;"></div>
+    <div id="counter"></div>
+    <div style="clear: both;"></div>
+    <div id="counter2"></div>
     <script type="text/javascript">
         var game = null;
         $.ready()
         {
             game = new Game($("#game"));
+ //           var game2 = new Game($("counter"));
+            for (var i = 0; i < 11; ++i)
+            {
+                $("#test_digit").append($("<div />").addClass("digits").addClass((i == 10) ? ("digit_minus") : ("digit_" + i)));
+            }
+
+            var counter = new Counter($("#counter"), "#counter");
+            var counter2 = new Counter($("#counter2"), "#counter2");
+
+            console.debug(counter, counter2);
+            counter.setVal(5);
+            counter2.setVal(6);
         }
     </script>
 </body>

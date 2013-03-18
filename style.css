@@ -121,3 +121,74 @@ body, html
 {
     background-position: -224px 0px;
 }
+
+.counter
+{
+    float: left;
+    border: 2px inset white;
+}
+
+.digits
+{
+    width: 13px;
+    height: 23px;
+    background: url(digits.png);
+    float: left;
+}
+
+.digit_0
+{
+    background-position: -13px 0px;
+}
+
+.digit_1
+{
+    background-position: -26px 0px;
+}
+
+.digit_2
+{
+    background-position: -39px 0px;
+}
+
+.digit_3
+{
+    background-position: -52px 0px;
+}
+
+.digit_4
+{
+    background-position: -65px 0px;
+}
+
+.digit_5
+{
+    background-position: -78px 0px;
+}
+
+.digit_6
+{
+    background-position: -91px 0px;
+}
+
+.digit_7
+ {
+     background-position: -104px 0px;
+ }
+
+.digit_8
+{
+    background-position: -117px 0px;
+}
+
+.digit_9
+{
+    background-position: -130px 0px;
+}
+
+.digit_minus
+{
+    background-position: 0px 0px;
+}
+
+

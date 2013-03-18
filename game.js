@@ -1,8 +1,33 @@
+function Counter (_id, _na)
+{
+    console.debug("con: ", _id, _na);
+    var na = _na;
+    var body = _id;
+    var value = (Math.random() * 10 | 0) % 8;
+
+    init = function ()
+    {
+        body.addClass("counter");
+        body.append($("<div />", {class: "num1"}).addClass("digits").addClass("digit_0"));
+        body.append($("<div />").addClass("digits").addClass("digit_0"));
+        body.append($("<div />").addClass("digits").addClass("digit_1"));
+    }
+
+    init();
+
+    this.setVal = function (val)
+    {
+        $(na + " > .num1").removeClass("digit_0").addClass("digit_" + val);
+    }
+}
+
 function Game (_id)
 {
     var mine_types = new Array("mine_empty", "mine_question", "mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
         "mine_count_6", "mine_count_7", "mine_count_8", "mine", "mine_checked", "mine_flag", "mine_empty_checked");
     var mines_checked_temp = new Array("mine_empty_checked_temp", "mine_question_checked_temp");
+    var mov_x = new Array(-1, -1, 0, 1, 1, 1, 0, -1);
+    var mov_y = new Array(0, 1, 1, 1, 0, -1, -1, -1);
     var body = _id;
     var width = 10;
     var height = 10;
@@ -64,6 +89,8 @@ function Game (_id)
 
     generateMines = function (pos)
     {
+        mines = [106, 12, 78, 50, 359, 352, 144, 287, 272, 223];
+        return;
         while (mines.length < mines_count)
         {
             var mine_pos = ((Math.random() * 100000) | 0) % (width * height);
@@ -90,11 +117,11 @@ function Game (_id)
 
     walkAround = function (pos)
     {
-        if (!isItemFieldFree($(".field_item[pos=" + pos + "]")))
+        var element = $("div.field_item[pos=" + pos + "]");
+
+        if (!isItemFieldFree(element))
             return;
 
-        var mov_x = new Array(-1, -1, 0, 1, 1, 1, 0, -1);
-        var mov_y = new Array(0, 1, 1, 1, 0, -1, -1, -1);
         var x = pos / width | 0;
         var y = pos % width;
 
@@ -118,10 +145,10 @@ function Game (_id)
         }
 
         if (mines_around)
-            setItemFieldType($(".field_item[pos=" + pos + "]"), "mine_count_" + mines_around);
+            setItemFieldType((element), "mine_count_" + mines_around);
         else
         {
-            setItemFieldType($(".field_item[pos=" + pos + "]"), "mine_empty_checked");
+            setItemFieldType((element), "mine_empty_checked");
 
             for (index in places)
                 walkAround(places[index]);
@@ -132,8 +159,6 @@ function Game (_id)
     {
         if (!isItemFieldFree(element))
             return;
-  //      if ($.inArray(getItemFieldType(element), [0, 1]) == -1)
-  //          return;
 
         var pos = Number(element.attr("pos"));
 
@@ -147,8 +172,14 @@ function Game (_id)
 
             return;
         }
+        var now = new Date();
 
+        console.debug("walkAround: begin", now.getSeconds(), now.getMilliseconds());
         walkAround(pos);
+        var now2 = new Date();
+
+        console.debug("walkAround: end", now2.getSeconds(), now2.getMilliseconds());
+
     }
 
     deleteGame = function ()
