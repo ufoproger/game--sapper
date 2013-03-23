@@ -51,28 +51,59 @@
             </tr>
         </table>
     </div>
+    <div id="test2">
+        <table border="1" width="100%">
+            <tr>
+                <td>
+                    <div id="score"></div>
+                </td>
+                <td>
+                    <div id="timer"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
     <div id="test_digit"></div>
     <div style="clear: both;"></div>
     <div id="counter"></div>
     <div style="clear: both;"></div>
     <div id="counter2"></div>
+    <div style="clear: both;"></div>
+    <div id="bu">Тест</div>
     <script type="text/javascript">
-        var game = null;
+  //      var game = null;
+    //    var t = 0;
         $.ready()
         {
-            game = new Game($("#game"));
- //           var game2 = new Game($("counter"));
-            for (var i = 0; i < 11; ++i)
-            {
-                $("#test_digit").append($("<div />").addClass("digits").addClass((i == 10) ? ("digit_minus") : ("digit_" + i)));
-            }
-
+            $("#game").sapper();
+            //game = new Game($("#game"));
+/*
             var counter = new Counter($("#counter"), "#counter");
             var counter2 = new Counter($("#counter2"), "#counter2");
 
             console.debug(counter, counter2);
             counter.setVal(5);
             counter2.setVal(6);
+*/
+//            $("#score").indicator();
+   //         $("#bu").button();
+
+      //      $("#score").everyTime(1000, "timer1", function ()
+/*            setInterval(function ()
+            {
+               $("#score").indicator("inc");
+            }, 1000);
+
+            $("#bu").click(function (e)
+            {
+                t += 57;
+                if (t > 1500)
+                    t = -150;
+                console.debug("t: ", t);
+                $("#score").indicator("value", t);
+
+                console.debug("score: ", $("#score").indicator("option", "value"));
+            });*/
         }
     </script>
 </body>

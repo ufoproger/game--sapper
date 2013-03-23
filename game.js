@@ -1,40 +1,112 @@
-function Counter (_id, _na)
-{
-    console.debug("con: ", _id, _na);
-    var na = _na;
-    var body = _id;
-    var value = (Math.random() * 10 | 0) % 8;
-
-    init = function ()
+$.widget("my.indicator", {
+    options:
     {
-        body.addClass("counter");
-        body.append($("<div />", {class: "num1"}).addClass("digits").addClass("digit_0"));
-        body.append($("<div />").addClass("digits").addClass("digit_0"));
-        body.append($("<div />").addClass("digits").addClass("digit_1"));
-    }
+        value: 0
+    },
 
-    init();
-
-    this.setVal = function (val)
+    _create: function ()
     {
-        $(na + " > .num1").removeClass("digit_0").addClass("digit_" + val);
+        this._class_values = "digit_0 digit_1 digit_2 digit_3 digit_4 digit_5 digit_6 digit_7 digit_8 digit_9";
+        this._num = new Array();
+        this.element.addClass("indicator");
+
+        for (var i = 0; i < 3; ++i)
+        {
+            this.element.append($("<div />").addClass("num" + i + " digits"));
+            this._num.push(this.element.find(".num" + i));
+        }
+
+        this._render();
+    },
+
+    _render: function ()
+    {
+        var val = this.options.value;
+
+        for (index in this._num)
+            this._num[index].removeClass(this._class_values);
+
+        for (var i = (val < 0 ? 1 : 0); i < 3; ++i)
+        {
+            var digit = Math.abs((val % Math.pow(10, 3 - i)) / Math.pow(10, 2 - i)) | 0;
+
+            this._num[i].addClass("digit_" + digit);
+        }
+    },
+
+    inc: function ()
+    {
+        ++this.options.value;
+        this._render();
+    },
+
+    value: function (_value)
+    {
+        this.options.value = _value;
+        this._render();
     }
-}
+});
 
-function Game (_id)
-{
-    var mine_types = new Array("mine_empty", "mine_question", "mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
-        "mine_count_6", "mine_count_7", "mine_count_8", "mine", "mine_checked", "mine_flag", "mine_empty_checked");
-    var mines_checked_temp = new Array("mine_empty_checked_temp", "mine_question_checked_temp");
-    var mov_x = new Array(-1, -1, 0, 1, 1, 1, 0, -1);
-    var mov_y = new Array(0, 1, 1, 1, 0, -1, -1, -1);
-    var body = _id;
-    var width = 10;
-    var height = 10;
-    var mines_count = 10;
-    var mines = new Array();
+$.widget("my.sapper", {
+    options:
+    {
+        width: 10,
+        height : 10,
+        mines_count : 10
+    },
 
-    getWordByNumber = function (num, words)
+    _create: function ()
+    {
+        this._mouse_button_pressed = false;
+        this._mine_types = new Array("mine_empty", "mine_question", "mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
+            "mine_count_6", "mine_count_7", "mine_count_8", "mine", "mine_checked", "mine_flag", "mine_empty_checked");
+        this._mines_checked_temp = new Array("mine_empty_checked_temp", "mine_question_checked_temp");
+        this._mov_x = new Array(-1, -1, 0, 1, 1, 1, 0, -1);
+        this._mov_y = new Array(0, 1, 1, 1, 0, -1, -1, -1);
+        this._mines = new Array();
+
+        this.element.addClass("game_sapper")
+            .append($("<div />")
+            .addClass("game")
+            .append($("<div />", {class: "information"}))
+            .append($("<div />").css("clear", "left"))
+            .append($("<div />", {class: "field"})))
+            .append($("<div />", {class: "settings"}));
+
+        $("#test2").children().appendTo(this.element.find(".information"));
+        $("#test").children().appendTo(this.element.find(".settings"));
+        $("#test").remove();
+        $("#test2").remove();
+        $("#score, #timer").indicator();
+
+        setInterval(function () { $("#timer").indicator("inc");}, 1000);
+
+        $("#slider").slider({min: 10, max: 20, slide: this._changeSlider, change: this._changeSlider});
+        $("#slider").slider("value", this.options.mines_count);
+        $("#spinner_height, #spinner_width").spinner({min: 10, max: 20});
+        $("#button_new_game").button();
+
+        var self = this;
+
+        $("#spinner_height").on("spin", function (e, ui)
+        {
+            self._updateSliderValue(ui.value, $("#spinner_width").val());
+        });
+
+        $("#spinner_width").on("spin", function (e, ui)
+        {
+            self._updateSliderValue($("#spinner_height").val(), ui.value);
+        });
+
+        $("#button_new_game").click(function ()
+        {
+            self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
+        });
+
+        this._startGame(this.options.height, this.options.width, this.options.mines_count);
+    },
+
+    _getWordByNumber: function (num, words)
     {
         num = Math.abs(num);
 
@@ -45,169 +117,172 @@ function Game (_id)
             return words[1];
 
         return words[2];
-    }
+    },
 
-    isItemFieldFree = function (element)
+    _isItemFieldFree: function (element)
     {
         for (var i = 0; i < 2; ++i)
-            if (element.hasClass(mine_types[i]))
+            if (element.hasClass(this._mine_types[i]))
                 return true;
 
         return false;
-    }
+    },
 
-    isItemFieldCheckedTemp = function (element)
+    _isItemFieldCheckedTemp: function (element)
     {
-        for (index in mines_checked_temp)
-            if (element.hasClass(mines_checked_temp[index]))
+        for (index in this._mines_checked_temp)
+            if (element.hasClass(this._mines_checked_temp[index]))
                 return true;
 
         return false;
-    }
+    },
 
-    setItemFieldCheckedTemp = function (element)
+    _setItemFieldCheckedTemp: function (element)
     {
-        for (index in mines_checked_temp)
-            if (element.hasClass(mine_types[index]))
-                element.addClass(mines_checked_temp[index]);
-    }
+        for (index in this._mines_checked_temp)
+            if (element.hasClass(this._mine_types[index]))
+                element.addClass(this._mines_checked_temp[index]);
+    },
 
-    removeItemFieldCheckedTemp = function (element)
+    _removeItemFieldCheckedTemp: function (element)
     {
-        for (index in mines_checked_temp)
-            element.removeClass(mines_checked_temp[index]);
-    }
+        for (index in this._mines_checked_temp)
+            element.removeClass(this._mines_checked_temp[index]);
+    },
 
-    getItemFieldType = function (element)
+    _getItemFieldType: function (element)
     {
-        for (index in mine_types)
-            if (element.hasClass(mine_types[index]))
+        for (index in this._mine_types)
+            if (element.hasClass(this._mine_types[index]))
                 return Number(index);
 
         return -1;
-    }
+    },
 
-    generateMines = function (pos)
-    {
-        mines = [106, 12, 78, 50, 359, 352, 144, 287, 272, 223];
-        return;
-        while (mines.length < mines_count)
+    _generateMines: function (pos)
+{
+    //       mines = [106, 12, 78, 50, 359, 352, 144, 287, 272, 223];
+//        return;
+        while (this._mines.length < this.options.mines_count)
         {
-            var mine_pos = ((Math.random() * 100000) | 0) % (width * height);
+            var mine_pos = ((Math.random() * 100000) | 0) % (this.options.width * this.options.height);
 
-            if (mine_pos != pos && $.inArray(mine_pos, mines) == -1)
-                mines.push(mine_pos);
+            if (mine_pos != pos && $.inArray(mine_pos, this._mines) == -1)
+                this._mines.push(mine_pos);
         }
 
-        console.debug(mines);
-    }
+        console.debug(this._mines);
+    },
 
-    setItemFieldType = function (element, new_type)
+    _setItemFieldType: function (element, new_type)
     {
-        for (index in mine_types)
-            element.removeClass(mine_types[index]);
+        for (index in this._mine_types)
+            element.removeClass(this._mine_types[index]);
 
         element.addClass(new_type);
-    }
+    },
 
-    inRange = function (value, left, right)
+    _inRange: function (value, left, right)
     {
         return (value >= left && value <= right);
-    }
+    },
 
-    walkAround = function (pos)
+    _walkAround: function (pos)
     {
         var element = $("div.field_item[pos=" + pos + "]");
 
-        if (!isItemFieldFree(element))
+        if (!this._isItemFieldFree(element))
             return;
 
-        var x = pos / width | 0;
-        var y = pos % width;
+        var x = pos / this.options.width | 0;
+        var y = pos % this.options.width;
 
         var places = new Array();
         var mines_around = 0;
 
         for (var k = 0; k < 8; ++k)
         {
-            var curr_x = x + mov_x[k];
-            var curr_y = y + mov_y[k];
+            var curr_x = x + this._mov_x[k];
+            var curr_y = y + this._mov_y[k];
 
-            if (curr_x < 0 | curr_y < 0 || curr_x >= height || curr_y >= width)
+            if (curr_x < 0 | curr_y < 0 || curr_x >= this.options.height || curr_y >= this.options.width)
                 continue;
 
-            var curr_pos = curr_x * width + curr_y;
+            var curr_pos = curr_x * this.options.width + curr_y;
 
             places.push(curr_pos);
 
-            if ($.inArray(curr_pos, mines) != -1)
+            if ($.inArray(curr_pos, this._mines) != -1)
                 ++mines_around;
         }
 
         if (mines_around)
-            setItemFieldType((element), "mine_count_" + mines_around);
+            this._setItemFieldType(element, "mine_count_" + mines_around);
         else
         {
-            setItemFieldType((element), "mine_empty_checked");
+            this._setItemFieldType(element, "mine_empty_checked");
 
             for (index in places)
-                walkAround(places[index]);
+                this._walkAround(places[index]);
         }
-    }
+    },
 
-    clickToItemField = function (element)
+    _clickToItemField: function (element)
     {
-        if (!isItemFieldFree(element))
+        if (!this._isItemFieldFree(element))
             return;
 
         var pos = Number(element.attr("pos"));
 
-        if ($.inArray(pos, mines) != -1)
+        if ($.inArray(pos, this._mines) != -1)
         {
-            for (index in mines)
-                setItemFieldType($(".field_item[pos=" + mines[index] + "]"), "mine");
+            for (index in this._mines)
+                this._setItemFieldType($(".field_item[pos=" + this._mines[index] + "]"), "mine");
 
-            setItemFieldType(element, "mine_checked");
-            gameOver(false);
+            this._setItemFieldType(element, "mine_checked");
+            this._gameOver(false);
 
             return;
         }
         var now = new Date();
 
         console.debug("walkAround: begin", now.getSeconds(), now.getMilliseconds());
-        walkAround(pos);
+        this._walkAround(pos);
         var now2 = new Date();
 
         console.debug("walkAround: end", now2.getSeconds(), now2.getMilliseconds());
+    },
 
-    }
-
-    deleteGame = function ()
+    _deleteGame: function ()
     {
-        $("#field > div").remove();
-        mines = new Array();
-    }
+        $(".field > div").remove();
+        this._mines = new Array();
+    },
 
-    startGame = function (_height, _width, _mine_count)
+    _startGame: function (_height, _width, _mine_count)
     {
-        deleteGame();
+        var self = this;
 
-        height = _height;
-        width = _width;
-        mines_count = _mine_count;
+        this._deleteGame();
 
-        updateSliderValue(height, width);
+        this.options.height = _height;
+        this.options.width = _width;
+        this.options.mines_count = _mine_count;
 
-        for (var i = 0; i < height; ++i)
+        this._updateSliderValue();
+
+        for (var i = 0; i < this.options.height; ++i)
         {
-            for (var j = 0; j < width; ++j)
-                $("#field").append($("<div />", {/*x: i, y: j, */pos: i * width + j}).addClass("field_item").addClass("mine_empty"));
+            for (var j = 0; j < this.options.width; ++j)
+                $(".field").append($("<div />", {pos: i * this.options.width + j}).addClass("field_item").addClass("mine_empty"));
 
-            $("#field").append($("<div />").css("clear", "both"));
+            $(".field").append($("<div />").css("clear", "both"));
         }
 
         $(".field_item").mousedown(function (e)
         {
+            self._mouse_button_pressed = 1;
+            console.debug("test");
             e.preventDefault();
 
             if (this == e.target)
@@ -217,13 +292,13 @@ function Game (_id)
                 if (e.ctrlKey)
                 {
                     var right_click_mines = new Array("mine_empty", "mine_flag", "mine_question");
-                    var p = $.inArray(mine_types[getItemFieldType(element)], right_click_mines);
+                    var p = $.inArray(self._mine_types[self._getItemFieldType(element)], right_click_mines);
 
                     if (p != -1)
-                        setItemFieldType(element, right_click_mines[(p + 1) % 3]);
+                        self._setItemFieldType(element, right_click_mines[(p + 1) % 3]);
                 }
                 else
-                    setItemFieldCheckedTemp(element);
+                    self._setItemFieldCheckedTemp(element);
             }
         });
 
@@ -238,86 +313,60 @@ function Game (_id)
             {
                 var element = $(e.target);
 
-                if (!isItemFieldCheckedTemp(element) && e.which == 1)
+                console.debug(self._mouse_button_pressed);
+                //console.debug(e.type, e.which, e.button);
+                //console.debug(e);
+                if (!self._isItemFieldCheckedTemp(element)/* && e.which == 1*/ && self._mouse_button_pressed)
                 {
-                    removeItemFieldCheckedTemp($(".field_item"));
-                    setItemFieldCheckedTemp(element);
+                    self._removeItemFieldCheckedTemp($(".field_item"));
+                    self._setItemFieldCheckedTemp(element);
                 }
             }
         });
 
         $(".field_item").mouseup(function (e)
         {
+            self._mouse_button_pressed = 0;
             e.preventDefault();
-            removeItemFieldCheckedTemp($(".field_item"));
+            self._removeItemFieldCheckedTemp($(".field_item"));
 
             if (!e.ctrlKey && this == e.target)
             {
                 var element = $(e.target);
                 var pos = Number(element.attr("pos"));
 
-                if (mines.length == 0)
-                    generateMines(pos);
+                if (self._mines.length == 0)
+                    self._generateMines(pos);
 
-                clickToItemField(element);
+                self._clickToItemField(element);
             }
 
-            if ($(".field_item.mine_empty").length + $(".field_item.mine_question").length + $(".field_item.mine_flag").length == mines_count)
+            if ($(".field_item.mine_empty").length + $(".field_item.mine_question").length + $(".field_item.mine_flag").length == self.options.mines_count)
             {
-                setItemFieldType($(".field_item.mine_empty"), "mine_flag");
-                gameOver(true);
+                self._setItemFieldType($(".field_item.mine_empty"), "mine_flag");
+                self._gameOver(true);
             }
         });
-    }
+    },
 
-    gameOver = function (win)
+    _gameOver: function (win)
     {
 
         $(".field_item").off();
-    }
+    },
 
-    changeSlider = function (e, ui)
+    _changeSlider: function (e, ui)
     {
-        $("#setting_mine_count").text(ui.value + " " + getWordByNumber(ui.value, ["мин", "мина", "мины"]));
-    }
+        console.debug(this);
+//        $("#setting_mine_count").text(ui.value + " " + _getWordByNumber(ui.value, ["мин", "мина", "мины"]));
+    },
 
-    updateSliderValue = function (curr_height, curr_width)
+    _updateSliderValue: function (curr_height, curr_width)
     {
-        var slider_max = (curr_height * curr_width * 0.9) | 0;
+        var slider_max = (this.options.height * this.options.width * 0.9) | 0;
         var slider_value = $("#slider").slider("value");
 
         $("#slider").slider("option", "max", slider_max);
         $("#slider").slider("option", "value", Math.min(slider_value, slider_max));
     }
-
-    init = function ()
-    {
-        body.append($("<div />", {id: "game_sapper"}));
-        $("#game_sapper").append($("<div />", {id: "field"}));
-        $("#game_sapper").append($("<div />", {id: "settings"}));
-        $("#test").children().appendTo($("#settings"));
-        $("#test").remove();
-        $("#slider").slider({min: 10, max: 20, slide: changeSlider, change: changeSlider});
-        $("#slider").slider("value", mines_count);
-        $("#spinner_height, #spinner_width").spinner({min: 10, max: 20});
-        $("#button_new_game").button();
-
-        $("#spinner_height").on("spin", function (e, ui)
-        {
-            updateSliderValue(ui.value, $("#spinner_width").val());
-        });
-
-        $("#spinner_width").on("spin", function (e, ui)
-        {
-           updateSliderValue($("#spinner_height").val(), ui.value);
-        });
-
-        $("#button_new_game").click(function ()
-        {
-            startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
-        });
-    }
-
-    init();
-    startGame(height, width, mines_count);
-}
+});

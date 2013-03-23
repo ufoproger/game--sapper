@@ -2,7 +2,17 @@ body, html
 {
 }
 
-#settings
+.information
+{
+    float: left;
+}
+
+.game
+{
+    float: left;
+}
+
+.settings
 {
     float: left;
     width: 220px;
@@ -21,14 +31,14 @@ body, html
     font-size: 0.8em;
 }
 
-#game_sapper
+.game_sapper
 {
     background-color: #c0c0c0;
     padding: 5px;
     float: left;
 }
 
-#field
+.field
 {
     float: left;
     border: 3px inset white;
@@ -122,7 +132,7 @@ body, html
     background-position: -224px 0px;
 }
 
-.counter
+.indicator
 {
     float: left;
     border: 2px inset white;
@@ -133,6 +143,7 @@ body, html
     width: 13px;
     height: 23px;
     background: url(digits.png);
+    background-position: 0px 0px;
     float: left;
 }
 
@@ -184,11 +195,6 @@ body, html
 .digit_9
 {
     background-position: -130px 0px;
-}
-
-.digit_minus
-{
-    background-position: 0px 0px;
 }
 
 
