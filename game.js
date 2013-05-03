@@ -448,7 +448,12 @@ $.widget("my.sapper", {
 
     _updateSliderLabel: function (value)
     {
-        $("#setting_mine_count").text(value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
+        var word = "";
+
+        if (value != this.options.mines_count)
+            word = "будет ";
+
+        $("#setting_mine_count").text(word + value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
     },
 
     _updateSliderValue: function (curr_height, curr_width)
