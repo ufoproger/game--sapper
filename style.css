@@ -41,7 +41,7 @@ body, html
 .field
 {
     float: left;
-    border: 3px inset white;
+ //   border: 3px inset white;
 }
 
 .field_item
@@ -132,6 +132,11 @@ body, html
     background-position: -224px 0px;
 }
 
+.mine_wrong_flag
+{
+    background-position: -240px 0px;
+}
+
 .indicator
 {
     float: left;
@@ -197,4 +202,36 @@ body, html
     background-position: -130px 0px;
 }
 
+.smile
+{
+    width: 26px;
+    height: 26px;
+    background: url(smiles.png);
+    background-position: 0px 0px;
+    float:left;
+}
 
+.smile_ok
+{
+    background-position: 0px 0px;
+}
+
+.smile_wah
+{
+    background-position: -26px 0px;
+}
+
+.smile_die
+{
+    background-position: -52px 0px;
+}
+
+.smile_cool
+{
+    background-position: -78px 0px;
+}
+
+.smile_ok_checked
+{
+    background-position: -104px 0px;
+}

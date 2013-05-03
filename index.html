@@ -51,11 +51,14 @@
             </tr>
         </table>
     </div>
-    <div id="test2">
-        <table border="1" width="100%">
+ <!--   <div id="test2" class="game_sapper field">
+        <table border="0" width="100%">
             <tr>
                 <td>
                     <div id="score"></div>
+                </td>
+                <td>
+                    <div id="smile"></div>
                 </td>
                 <td>
                     <div id="timer"></div>
@@ -63,47 +66,66 @@
             </tr>
         </table>
     </div>
-    <div id="test_digit"></div>
-    <div style="clear: both;"></div>
-    <div id="counter"></div>
-    <div style="clear: both;"></div>
-    <div id="counter2"></div>
-    <div style="clear: both;"></div>
-    <div id="bu">Тест</div>
+     -->
+
+    <style>
+        .table1
+        {
+            border-width: 3px;
+            border-style: outset;
+            border-color: white;
+            border-collapse: separate;
+            border-spacing: 5px;
+        }
+
+        .tr1
+        {
+            border: 30px;
+        }
+
+        .td1
+        {
+            border-width: 3px;
+            border-style: inset;
+            border-color: white;
+        }
+    </style>
+    <div id="test3">
+        <div class="game">
+            <table class="table1">
+                <tr class="tr1">
+                    <td class="td1">
+                        <table border="0" width="100%">
+                            <tr>
+                                <td>
+                                    <div id="score"></div>
+                                </td>
+                                <td width="1%">
+                                    <div id="smile"></div>
+                                </td>
+                                <td align="right">
+                                    <div id="timer" style="float: right;"></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <!--<div style="clear: left;"></div>-->
+
+                    <div class="field"></div>
+                </td>
+                </tr>
+            </table>
+        </div>
+        <div class="settings"></div>
+    </div>
+
     <script type="text/javascript">
-  //      var game = null;
-    //    var t = 0;
         $.ready()
         {
             $("#game").sapper();
-            //game = new Game($("#game"));
-/*
-            var counter = new Counter($("#counter"), "#counter");
-            var counter2 = new Counter($("#counter2"), "#counter2");
-
-            console.debug(counter, counter2);
-            counter.setVal(5);
-            counter2.setVal(6);
-*/
-//            $("#score").indicator();
-   //         $("#bu").button();
-
-      //      $("#score").everyTime(1000, "timer1", function ()
-/*            setInterval(function ()
-            {
-               $("#score").indicator("inc");
-            }, 1000);
-
-            $("#bu").click(function (e)
-            {
-                t += 57;
-                if (t > 1500)
-                    t = -150;
-                console.debug("t: ", t);
-                $("#score").indicator("value", t);
-
-                console.debug("score: ", $("#score").indicator("option", "value"));
-            });*/
         }
     </script>
 </body>

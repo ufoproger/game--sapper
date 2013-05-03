@@ -1,3 +1,54 @@
+$.widget("my.smile", {
+    options:
+    {
+        states: "smile_ok smile_wah smile_die smile_cool smile_ok_checked"
+    },
+
+    _create: function ()
+    {
+        var self = this;
+
+        this.element.addClass("smile");
+
+        this.element.mousedown(function (e)
+        {
+            self.element.addClass("smile_ok_checked");
+        });
+
+        this.element.mouseup(function (e)
+        {
+            self._setSmile("smile_ok");
+            self._trigger("click");
+        });
+    },
+
+    _setSmile: function (smile)
+    {
+        this.element.removeClass(this.options.states).addClass(smile);
+    },
+
+    die: function ()
+    {
+        this._setSmile("smile_die");
+    },
+
+    cool: function ()
+    {
+        this._setSmile("smile_cool");
+    },
+
+    wah: function ()
+    {
+        this._setSmile("smile_wah");
+    },
+
+    unwah: function ()
+    {
+        this._setSmile("smile_ok");
+    }
+
+});
+
 $.widget("my.indicator", {
     options:
     {
@@ -42,6 +93,9 @@ $.widget("my.indicator", {
 
     value: function (_value)
     {
+        if (_value === undefined)
+            return this.options.value;
+
         this.options.value = _value;
         this._render();
     }
@@ -52,41 +106,67 @@ $.widget("my.sapper", {
     {
         width: 10,
         height : 10,
-        mines_count : 10
+        mines_count : 10,
+        timer_id: 0
     },
 
     _create: function ()
     {
         this._mouse_button_pressed = false;
         this._mine_types = new Array("mine_empty", "mine_question", "mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
-            "mine_count_6", "mine_count_7", "mine_count_8", "mine", "mine_checked", "mine_flag", "mine_empty_checked");
+            "mine_count_6", "mine_count_7", "mine_count_8", "mine", "mine_checked", "mine_flag", "mine_empty_checked", "mine_wrong_flag");
         this._mines_checked_temp = new Array("mine_empty_checked_temp", "mine_question_checked_temp");
         this._mov_x = new Array(-1, -1, 0, 1, 1, 1, 0, -1);
         this._mov_y = new Array(0, 1, 1, 1, 0, -1, -1, -1);
         this._mines = new Array();
 
-        this.element.addClass("game_sapper")
+        var self = this;
+
+        this.element.addClass("game_sapper");/*
             .append($("<div />")
             .addClass("game")
             .append($("<div />", {class: "information"}))
             .append($("<div />").css("clear", "left"))
             .append($("<div />", {class: "field"})))
             .append($("<div />", {class: "settings"}));
-
-        $("#test2").children().appendTo(this.element.find(".information"));
+     */
+        $("#test3").children().appendTo(this.element);
+   //     $("#test2").children().appendTo(this.element.find(".information"));
         $("#test").children().appendTo(this.element.find(".settings"));
         $("#test").remove();
         $("#test2").remove();
         $("#score, #timer").indicator();
+        $("#smile").smile();
 
-        setInterval(function () { $("#timer").indicator("inc");}, 1000);
+        this.options.timer_id = setInterval(function ()
+        {
+            $("#timer").indicator("inc");
+        }, 1000);
 
-        $("#slider").slider({min: 10, max: 20, slide: this._changeSlider, change: this._changeSlider});
+        $("#smile").on("click", function ()
+        {
+            self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
+        });
+
+        $("#slider").slider(
+            {
+                min: 10,
+                max: 20,
+                change:
+                    function (e, ui)
+                    {
+                        self._updateSliderLabel(ui.value);
+                    },
+                slide:
+                    function (e, ui)
+                    {
+                        self._updateSliderLabel(ui.value);
+                    }
+            });
+
         $("#slider").slider("value", this.options.mines_count);
         $("#spinner_height, #spinner_width").spinner({min: 10, max: 20});
         $("#button_new_game").button();
-
-        var self = this;
 
         $("#spinner_height").on("spin", function (e, ui)
         {
@@ -101,22 +181,10 @@ $.widget("my.sapper", {
         $("#button_new_game").click(function ()
         {
             self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
+            $("#smile").smile("unwah");
         });
 
         this._startGame(this.options.height, this.options.width, this.options.mines_count);
-    },
-
-    _getWordByNumber: function (num, words)
-    {
-        num = Math.abs(num);
-
-        if ((num % 100 >= 10 && num % 100 <= 20) || (num % 10 >= 5 && num % 10 <= 9) || (num % 10 == 0))
-            return words[0];
-
-        if (num % 10 == 1)
-            return words[1];
-
-        return words[2];
     },
 
     _isItemFieldFree: function (element)
@@ -171,7 +239,7 @@ $.widget("my.sapper", {
                 this._mines.push(mine_pos);
         }
 
-        console.debug(this._mines);
+//        console.debug(this._mines);
     },
 
     _setItemFieldType: function (element, new_type)
@@ -236,22 +304,32 @@ $.widget("my.sapper", {
 
         if ($.inArray(pos, this._mines) != -1)
         {
-            for (index in this._mines)
-                this._setItemFieldType($(".field_item[pos=" + this._mines[index] + "]"), "mine");
+            $(".field_item.mine_flag").removeClass("mine_flag").addClass("mine_wrong_flag");
 
-            this._setItemFieldType(element, "mine_checked");
+            for (var index in this._mines)
+            {
+                var element = $(".field_item[pos=" + this._mines[index] + "]");
+
+                if (element.hasClass("mine_wrong_flag"))
+                    this._setItemFieldType(element, "mine_flag")
+                else
+                    this._setItemFieldType(element, "mine");
+            }
+
+            this._setItemFieldType($(".field_item[pos=" + pos + "]"), "mine_checked");
             this._gameOver(false);
 
             return;
         }
-        var now = new Date();
+      /*  var now = new Date();
 
         console.debug("walkAround: begin", now.getSeconds(), now.getMilliseconds());
-        this._walkAround(pos);
-        var now2 = new Date();
+    */    this._walkAround(pos);
 
-        console.debug("walkAround: end", now2.getSeconds(), now2.getMilliseconds());
-    },
+/*        var now2 = new Date();
+
+        console.time("walkAround: end", now2.getSeconds(), now2.getMilliseconds());
+  */  },
 
     _deleteGame: function ()
     {
@@ -264,12 +342,12 @@ $.widget("my.sapper", {
         var self = this;
 
         this._deleteGame();
-
         this.options.height = _height;
         this.options.width = _width;
         this.options.mines_count = _mine_count;
-
         this._updateSliderValue();
+        $("#score").indicator("value", this.options.mines_count);
+        $("#timer").indicator("value", 0);
 
         for (var i = 0; i < this.options.height; ++i)
         {
@@ -282,7 +360,7 @@ $.widget("my.sapper", {
         $(".field_item").mousedown(function (e)
         {
             self._mouse_button_pressed = 1;
-            console.debug("test");
+            $("#smile").smile("wah");
             e.preventDefault();
 
             if (this == e.target)
@@ -299,6 +377,8 @@ $.widget("my.sapper", {
                 }
                 else
                     self._setItemFieldCheckedTemp(element);
+
+                $("#score").indicator("value", self.options.mines_count - $(".field_item.mine_flag").length);
             }
         });
 
@@ -313,9 +393,6 @@ $.widget("my.sapper", {
             {
                 var element = $(e.target);
 
-                console.debug(self._mouse_button_pressed);
-                //console.debug(e.type, e.which, e.button);
-                //console.debug(e);
                 if (!self._isItemFieldCheckedTemp(element)/* && e.which == 1*/ && self._mouse_button_pressed)
                 {
                     self._removeItemFieldCheckedTemp($(".field_item"));
@@ -327,6 +404,7 @@ $.widget("my.sapper", {
         $(".field_item").mouseup(function (e)
         {
             self._mouse_button_pressed = 0;
+            $("#smile").smile("unwah");
             e.preventDefault();
             self._removeItemFieldCheckedTemp($(".field_item"));
 
@@ -353,12 +431,24 @@ $.widget("my.sapper", {
     {
 
         $(".field_item").off();
+        clearInterval(this.options.timer_id);
+
+        var time = $("#timer").indicator("value");
+
+        if (win)
+        {
+            $("#smile").smile("cool");
+            alert("Вы победили! Вы достигли победы за " + time + " " + this._getWordByNumber(time, ["секунд", "секунду", "секунды"]) + "!");
+        }
+        else
+        {
+            $("#smile").smile("die");
+        }
     },
 
-    _changeSlider: function (e, ui)
+    _updateSliderLabel: function (value)
     {
-        console.debug(this);
-//        $("#setting_mine_count").text(ui.value + " " + _getWordByNumber(ui.value, ["мин", "мина", "мины"]));
+        $("#setting_mine_count").text(value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
     },
 
     _updateSliderValue: function (curr_height, curr_width)
@@ -368,5 +458,18 @@ $.widget("my.sapper", {
 
         $("#slider").slider("option", "max", slider_max);
         $("#slider").slider("option", "value", Math.min(slider_value, slider_max));
+    },
+
+    _getWordByNumber: function (num, words)
+    {
+        num = Math.abs(num);
+
+        if ((num % 100 >= 10 && num % 100 <= 20) || (num % 10 >= 5 && num % 10 <= 9) || (num % 10 == 0))
+            return words[0];
+
+        if (num % 10 == 1)
+            return words[1];
+
+        return words[2];
     }
 });
