@@ -1,21 +1,17 @@
 $.widget("my.smile", {
-    options:
-    {
-        states: "smile_ok smile_wah smile_die smile_cool smile_ok_checked"
-    },
-
     _create: function ()
     {
+        this._states = "smile_ok smile_wah smile_die smile_cool smile_ok_checked";
         var self = this;
 
         this.element.addClass("smile");
 
-        this.element.mousedown(function (e)
+        this.element.mousedown(function ()
         {
             self.element.addClass("smile_ok_checked");
         });
 
-        this.element.mouseup(function (e)
+        this.element.mouseup(function ()
         {
             self._setSmile("smile_ok");
             self._trigger("click");
@@ -24,7 +20,7 @@ $.widget("my.smile", {
 
     _setSmile: function (smile)
     {
-        this.element.removeClass(this.options.states).addClass(smile);
+        this.element.removeClass(this._states).addClass(smile);
     },
 
     die: function ()
@@ -46,7 +42,6 @@ $.widget("my.smile", {
     {
         this._setSmile("smile_ok");
     }
-
 });
 
 $.widget("my.indicator", {
@@ -57,8 +52,9 @@ $.widget("my.indicator", {
 
     _create: function ()
     {
+
         this._class_values = "digit_0 digit_1 digit_2 digit_3 digit_4 digit_5 digit_6 digit_7 digit_8 digit_9";
-        this._num = new Array();
+        this._num = [];
         this.element.addClass("indicator");
 
         for (var i = 0; i < 3; ++i)
@@ -74,7 +70,7 @@ $.widget("my.indicator", {
     {
         var val = this.options.value;
 
-        for (index in this._num)
+        for (var index in this._num)
             this._num[index].removeClass(this._class_values);
 
         for (var i = (val < 0 ? 1 : 0); i < 3; ++i)
@@ -102,23 +98,19 @@ $.widget("my.indicator", {
 });
 
 $.widget("my.sapper", {
-    options:
-    {
-        width: 10,
-        height : 10,
-        mines_count : 10,
-        timer_id: 0
-    },
-
     _create: function ()
     {
+        this._mov_x = [-1, -1, 0, 1, 1, 1, 0, -1];
+        this._mov_y = [0, 1, 1, 1, 0, -1, -1, -1];
         this._mouse_button_pressed = false;
+        this._mines_count = 10;
+        this._height = 10;
+        this._width = 10;
+        this._timer_id = 0;
+        this._mines = [];
         this._mine_types = new Array("mine_empty", "mine_question", "mine_count_1", "mine_count_2", "mine_count_3", "mine_count_4", "mine_count_5",
             "mine_count_6", "mine_count_7", "mine_count_8", "mine", "mine_checked", "mine_flag", "mine_empty_checked", "mine_wrong_flag");
         this._mines_checked_temp = new Array("mine_empty_checked_temp", "mine_question_checked_temp");
-        this._mov_x = new Array(-1, -1, 0, 1, 1, 1, 0, -1);
-        this._mov_y = new Array(0, 1, 1, 1, 0, -1, -1, -1);
-        this._mines = new Array();
 
         var self = this;
 
@@ -138,11 +130,6 @@ $.widget("my.sapper", {
         $("#score, #timer").indicator();
         $("#smile").smile();
 
-        this.options.timer_id = setInterval(function ()
-        {
-            $("#timer").indicator("inc");
-        }, 1000);
-
         $("#smile").on("click", function ()
         {
             self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
@@ -150,6 +137,7 @@ $.widget("my.sapper", {
 
         $("#slider").slider(
             {
+                value: self._mines_count,
                 min: 10,
                 max: 20,
                 change:
@@ -164,7 +152,6 @@ $.widget("my.sapper", {
                     }
             });
 
-        $("#slider").slider("value", this.options.mines_count);
         $("#spinner_height, #spinner_width").spinner({min: 10, max: 20});
         $("#button_new_game").button();
 
@@ -184,7 +171,7 @@ $.widget("my.sapper", {
             $("#smile").smile("unwah");
         });
 
-        this._startGame(this.options.height, this.options.width, this.options.mines_count);
+        this._startGame(this._height, this._width, this._mines_count);
     },
 
     _isItemFieldFree: function (element)
@@ -198,7 +185,7 @@ $.widget("my.sapper", {
 
     _isItemFieldCheckedTemp: function (element)
     {
-        for (index in this._mines_checked_temp)
+        for (var index in this._mines_checked_temp)
             if (element.hasClass(this._mines_checked_temp[index]))
                 return true;
 
@@ -207,20 +194,20 @@ $.widget("my.sapper", {
 
     _setItemFieldCheckedTemp: function (element)
     {
-        for (index in this._mines_checked_temp)
+        for (var index in this._mines_checked_temp)
             if (element.hasClass(this._mine_types[index]))
                 element.addClass(this._mines_checked_temp[index]);
     },
 
     _removeItemFieldCheckedTemp: function (element)
     {
-        for (index in this._mines_checked_temp)
+        for (var index in this._mines_checked_temp)
             element.removeClass(this._mines_checked_temp[index]);
     },
 
     _getItemFieldType: function (element)
     {
-        for (index in this._mine_types)
+        for (var index in this._mine_types)
             if (element.hasClass(this._mine_types[index]))
                 return Number(index);
 
@@ -231,9 +218,9 @@ $.widget("my.sapper", {
 {
     //       mines = [106, 12, 78, 50, 359, 352, 144, 287, 272, 223];
 //        return;
-        while (this._mines.length < this.options.mines_count)
+        while (this._mines.length < this._mines_count)
         {
-            var mine_pos = ((Math.random() * 100000) | 0) % (this.options.width * this.options.height);
+            var mine_pos = ((Math.random() * 100000) | 0) % (this._width * this._height);
 
             if (mine_pos != pos && $.inArray(mine_pos, this._mines) == -1)
                 this._mines.push(mine_pos);
@@ -244,7 +231,7 @@ $.widget("my.sapper", {
 
     _setItemFieldType: function (element, new_type)
     {
-        for (index in this._mine_types)
+        for (var index in this._mine_types)
             element.removeClass(this._mine_types[index]);
 
         element.addClass(new_type);
@@ -262,10 +249,10 @@ $.widget("my.sapper", {
         if (!this._isItemFieldFree(element))
             return;
 
-        var x = pos / this.options.width | 0;
-        var y = pos % this.options.width;
+        var x = pos / this._width | 0;
+        var y = pos % this._width;
 
-        var places = new Array();
+        var places = [];
         var mines_around = 0;
 
         for (var k = 0; k < 8; ++k)
@@ -273,10 +260,10 @@ $.widget("my.sapper", {
             var curr_x = x + this._mov_x[k];
             var curr_y = y + this._mov_y[k];
 
-            if (curr_x < 0 | curr_y < 0 || curr_x >= this.options.height || curr_y >= this.options.width)
+            if (curr_x < 0 | curr_y < 0 || curr_x >= this._height || curr_y >= this._width)
                 continue;
 
-            var curr_pos = curr_x * this.options.width + curr_y;
+            var curr_pos = curr_x * this._width + curr_y;
 
             places.push(curr_pos);
 
@@ -290,7 +277,7 @@ $.widget("my.sapper", {
         {
             this._setItemFieldType(element, "mine_empty_checked");
 
-            for (index in places)
+            for (var index in places)
                 this._walkAround(places[index]);
         }
     },
@@ -337,22 +324,22 @@ $.widget("my.sapper", {
         this._mines = new Array();
     },
 
-    _startGame: function (_height, _width, _mine_count)
+    _startGame: function (_height, _width, _mines_count)
     {
         var self = this;
 
         this._deleteGame();
-        this.options.height = _height;
-        this.options.width = _width;
-        this.options.mines_count = _mine_count;
+        this._height = _height;
+        this._width = _width;
+        this._mines_count = _mines_count;
         this._updateSliderValue();
-        $("#score").indicator("value", this.options.mines_count);
+        $("#score").indicator("value", _mines_count);
         $("#timer").indicator("value", 0);
 
-        for (var i = 0; i < this.options.height; ++i)
+        for (var i = 0; i < this._height; ++i)
         {
-            for (var j = 0; j < this.options.width; ++j)
-                $(".field").append($("<div />", {pos: i * this.options.width + j}).addClass("field_item").addClass("mine_empty"));
+            for (var j = 0; j < this._width; ++j)
+                $(".field").append($("<div />", {pos: i * this._width + j}).addClass("field_item mine_empty"));
 
             $(".field").append($("<div />").css("clear", "both"));
         }
@@ -378,7 +365,7 @@ $.widget("my.sapper", {
                 else
                     self._setItemFieldCheckedTemp(element);
 
-                $("#score").indicator("value", self.options.mines_count - $(".field_item.mine_flag").length);
+                $("#score").indicator("value", self._mines_count - $(".field_item.mine_flag").length);
             }
         });
 
@@ -414,12 +401,18 @@ $.widget("my.sapper", {
                 var pos = Number(element.attr("pos"));
 
                 if (self._mines.length == 0)
+                {
                     self._generateMines(pos);
+                    self._timer_id = setInterval(function ()
+                    {
+                        $("#timer").indicator("inc");
+                    }, 1000);
+                }
 
                 self._clickToItemField(element);
             }
 
-            if ($(".field_item.mine_empty").length + $(".field_item.mine_question").length + $(".field_item.mine_flag").length == self.options.mines_count)
+            if ($(".field_item.mine_empty").length + $(".field_item.mine_question").length + $(".field_item.mine_flag").length == self._mines_count)
             {
                 self._setItemFieldType($(".field_item.mine_empty"), "mine_flag");
                 self._gameOver(true);
@@ -431,7 +424,7 @@ $.widget("my.sapper", {
     {
 
         $(".field_item").off();
-        clearInterval(this.options.timer_id);
+        clearInterval(this._timer_id);
 
         var time = $("#timer").indicator("value");
 
@@ -450,7 +443,7 @@ $.widget("my.sapper", {
     {
         var word = "";
 
-        if (value != this.options.mines_count)
+        if (value != this._mines_count)
             word = "будет ";
 
         $("#setting_mine_count").text(word + value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
@@ -458,11 +451,10 @@ $.widget("my.sapper", {
 
     _updateSliderValue: function (curr_height, curr_width)
     {
-        var slider_max = (this.options.height * this.options.width * 0.9) | 0;
+        var slider_max = (this._height * this._width * 0.9) | 0;
         var slider_value = $("#slider").slider("value");
 
-        $("#slider").slider("option", "max", slider_max);
-        $("#slider").slider("option", "value", Math.min(slider_value, slider_max));
+        $("#slider").slider("option", "max", slider_max).slider("option", "value", Math.min(slider_value, slider_max));
     },
 
     _getWordByNumber: function (num, words)
