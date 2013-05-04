@@ -6,15 +6,31 @@ $.widget("my.smile", {
 
         this.element.addClass("smile");
 
-        this.element.mousedown(function ()
+        this.element.mousedown(function (e)
         {
+            e.preventDefault();
+
+            if (e.which != 1)
+                return false;
+
             self.element.addClass("smile_ok_checked");
         });
 
-        this.element.mouseup(function ()
+        this.element.mouseup(function (e)
         {
+            if (!self.element.hasClass("smile_ok_checked"))
+                return false;
+
             self._setSmile("smile_ok");
             self._trigger("click");
+        });
+
+        this.element.mouseleave(function (e)
+        {
+            if (e.which == 1)
+            {
+                self.element.removeClass("smile_ok_checked");
+            }
         });
     },
 
@@ -35,12 +51,12 @@ $.widget("my.smile", {
 
     wah: function ()
     {
-        this._setSmile("smile_wah");
+        this.element.addClass("smile_wah");
     },
 
     unwah: function ()
     {
-        this._setSmile("smile_ok");
+        this.element.removeClass("smile_wah");
     }
 });
 
@@ -114,6 +130,11 @@ $.widget("my.sapper", {
 
         var self = this;
 
+        $(this.element).on("contextmenu", function (e)
+        {
+            return false;
+        });
+
         this.element.addClass("game_sapper");/*
             .append($("<div />")
             .addClass("game")
@@ -130,7 +151,7 @@ $.widget("my.sapper", {
         $("#score, #timer").indicator();
         $("#smile").smile();
 
-        $("#smile").on("click", function ()
+        $("#smile").bind("smileclick", function (e)
         {
             self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
         });
@@ -321,13 +342,14 @@ $.widget("my.sapper", {
     _deleteGame: function ()
     {
         $(".field > div").remove();
-        this._mines = new Array();
+        this._mines = [];
     },
 
     _startGame: function (_height, _width, _mines_count)
     {
         var self = this;
 
+        clearInterval(this._timer_id);
         this._deleteGame();
         this._height = _height;
         this._width = _width;
@@ -344,19 +366,39 @@ $.widget("my.sapper", {
             $(".field").append($("<div />").css("clear", "both"));
         }
 
+        $(".field").mouseleave(function (e)
+        {
+            if (e.which)
+            {
+                self._mouse_button_pressed = false;
+                self._removeItemFieldCheckedTemp($(".field_item"));
+                $("#smile").smile("unwah");
+            }
+        });
+
+        $(".field").mouseenter(function (e)
+        {
+            if (e.which == 1)
+            {
+                self._mouse_button_pressed = true;
+                $("#smile").smile("wah");
+            }
+        });
+
         $(".field_item").mousedown(function (e)
         {
-            self._mouse_button_pressed = 1;
-            $("#smile").smile("wah");
             e.preventDefault();
+
+            self._mouse_button_pressed = true;
+            $("#smile").smile("wah");
 
             if (this == e.target)
             {
                 var element = $(e.target);
 
-                if (e.ctrlKey)
+                if (e.which == 3)
                 {
-                    var right_click_mines = new Array("mine_empty", "mine_flag", "mine_question");
+                    var right_click_mines = ["mine_empty", "mine_flag", "mine_question"];
                     var p = $.inArray(self._mine_types[self._getItemFieldType(element)], right_click_mines);
 
                     if (p != -1)
@@ -373,7 +415,7 @@ $.widget("my.sapper", {
         {
             e.preventDefault();
 
-            if (e.ctrlKey)
+            if (e.which == 3)
                 return;
 
             if (this == e.target)
@@ -390,12 +432,12 @@ $.widget("my.sapper", {
 
         $(".field_item").mouseup(function (e)
         {
-            self._mouse_button_pressed = 0;
+            self._mouse_button_pressed = false;
             $("#smile").smile("unwah");
             e.preventDefault();
             self._removeItemFieldCheckedTemp($(".field_item"));
 
-            if (!e.ctrlKey && this == e.target)
+            if (e.which != 3 && this == e.target)
             {
                 var element = $(e.target);
                 var pos = Number(element.attr("pos"));
@@ -403,6 +445,7 @@ $.widget("my.sapper", {
                 if (self._mines.length == 0)
                 {
                     self._generateMines(pos);
+
                     self._timer_id = setInterval(function ()
                     {
                         $("#timer").indicator("inc");
@@ -422,8 +465,8 @@ $.widget("my.sapper", {
 
     _gameOver: function (win)
     {
-
         $(".field_item").off();
+        $(".field").off();
         clearInterval(this._timer_id);
 
         var time = $("#timer").indicator("value");

@@ -215,11 +215,6 @@ body, html
     background-position: 0px 0px;
 }
 
-.smile_wah
-{
-    background-position: -26px 0px;
-}
-
 .smile_die
 {
     background-position: -52px 0px;
@@ -228,6 +223,11 @@ body, html
 .smile_cool
 {
     background-position: -78px 0px;
+}
+
+.smile_wah
+{
+    background-position: -26px 0px;
 }
 
 .smile_ok_checked
