@@ -2,12 +2,7 @@ body, html
 {
 }
 
-.information
-{
-    float: left;
-}
-
-.game
+div.game
 {
     float: left;
 }
@@ -20,12 +15,12 @@ body, html
     font-size: 0.9em;
 }
 
-#slider
+.slider
 {
     margin: 2px 10px 10px 10px;
 }
 
-#spinner_height, #spinner_width
+.spinner_height, .spinner_width
 {
     width: 60px;
     font-size: 0.8em;
@@ -53,87 +48,87 @@ body, html
 
 .mine_count_1
 {
-    background-position: -32px 0px;
+    background-position: -32px 0;
 }
 
 .mine_count_2
 {
-    background-position: -48px 0px;
+    background-position: -48px 0;
 }
 
 .mine_count_3
 {
-    background-position: -64px 0px;
+    background-position: -64px 0;
 }
 
 .mine_count_4
 {
-    background-position: -80px 0px;
+    background-position: -80px 0;
 }
 
 .mine_count_5
 {
-    background-position: -96px 0px;
+    background-position: -96px 0;
 }
 
 .mine_count_6
 {
-    background-position: -112px 0px;
+    background-position: -112px 0;
 }
 
 .mine_count_7
 {
-    background-position: -128px 0px;
+    background-position: -128px 0;
 }
 
 .mine_count_8
 {
-    background-position: -144px 0px;
+    background-position: -144px 0;
 }
 
 .mine_empty
 {
-    background-position: 0px 0px;
+    background-position: 0 0;
 }
 
 .mine_empty_checked
 {
-    background-position: -16px 0px;
+    background-position: -16px 0;
 }
 
 .mine_empty_checked_temp
 {
-    background-position: -16px 0px;
+    background-position: -16px 0;
 }
 
 .mine
 {
-    background-position: -160px 0px;
+    background-position: -160px 0;
 }
 
 .mine_checked
 {
-    background-position: -176px 0px;
+    background-position: -176px 0;
 }
 
 .mine_flag
 {
-    background-position: -192px 0px;
+    background-position: -192px 0;
 }
 
 .mine_question
 {
-    background-position: -208px 0px;
+    background-position: -208px 0;
 }
 
 .mine_question_checked_temp
 {
-    background-position: -224px 0px;
+    background-position: -224px 0;
 }
 
 .mine_wrong_flag
 {
-    background-position: -240px 0px;
+    background-position: -240px 0;
 }
 
 .indicator
@@ -146,91 +141,122 @@ body, html
 {
     width: 13px;
     height: 23px;
-    background: url(digits.png);
-    background-position: 0px 0px;
+    background: url(digits.png) 0 0;
     float: left;
 }
 
 .digit_0
 {
-    background-position: -13px 0px;
+    background-position: -13px 0;
 }
 
 .digit_1
 {
-    background-position: -26px 0px;
+    background-position: -26px 0;
 }
 
 .digit_2
 {
-    background-position: -39px 0px;
+    background-position: -39px 0;
 }
 
 .digit_3
 {
-    background-position: -52px 0px;
+    background-position: -52px 0;
 }
 
 .digit_4
 {
-    background-position: -65px 0px;
+    background-position: -65px 0;
 }
 
 .digit_5
 {
-    background-position: -78px 0px;
+    background-position: -78px 0;
 }
 
 .digit_6
 {
-    background-position: -91px 0px;
+    background-position: -91px 0;
 }
 
 .digit_7
  {
-     background-position: -104px 0px;
+     background-position: -104px 0;
  }
 
 .digit_8
 {
-    background-position: -117px 0px;
+    background-position: -117px 0;
 }
 
 .digit_9
 {
-    background-position: -130px 0px;
+    background-position: -130px 0;
 }
 
 .smile
 {
     width: 26px;
     height: 26px;
-    background: url(smiles.png);
-    background-position: 0px 0px;
+    background: url(smiles.png) 0 0;
     float:left;
 }
 
 .smile_ok
 {
-    background-position: 0px 0px;
+    background-position: 0 0;
 }
 
 .smile_die
 {
-    background-position: -52px 0px;
+    background-position: -52px 0;
 }
 
 .smile_cool
 {
-    background-position: -78px 0px;
+    background-position: -78px 0;
 }
 
 .smile_wah
 {
-    background-position: -26px 0px;
+    background-position: -26px 0;
 }
 
 .smile_ok_checked
 {
-    background-position: -104px 0px;
+    background-position: -104px 0;
+}
+
+table.game
+{
+    border: 3px outset white;
+    border-collapse: separate;
+    border-spacing: 5px;
+}
+
+tr.game
+{
+    border: 30px;
+}
+
+td.game
+{
+    border: 3px inset white;
+}
+
+.indicator_timer
+{
+    float: right;
+}
+
+table.information
+{
+    border: 0;
+    width: 100%;
+}
+
+td.information
+{
+    width: 1%;
 }

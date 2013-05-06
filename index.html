@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Сапёр</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
     <script type="text/javascript" src="game.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -12,7 +12,7 @@
 <body>
     <div id="game"></div>
     <div id="test">
-        <table border="0" width="100%">
+        <table border="0">
             <tr>
                 <td colspan="2" align="center">
                    <b> Игра "Сапёр"</b>
@@ -23,7 +23,7 @@
                     Высота
                 </td>
                 <td width="10%">
-                    <input id="spinner_height" value="10" readonly />
+                    <input class="spinner_height" value="10" readonly />
                 </td>
             </tr>
             <tr>
@@ -31,86 +31,35 @@
                     Ширина
                 </td>
                 <td>
-                    <input id="spinner_width" value="10" readonly />
+                    <input class="spinner_width" value="10" readonly />
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    На поле <span id="setting_mine_count">?</span>
+                    На поле <span class="setting_mine_count">?</span>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <div id="slider"></div>
+                    <div class="slider"></div>
                 </td>
             </tr>
             <tr>
                 <td colspan="2" align="center">
-                    <button id="button_new_game">Начать новую игру!</button>
+                    <button class="button_new_game">Начать новую игру!</button>
                 </td>
             </tr>
         </table>
     </div>
 
-    <style>
-        .table1
-        {
-            border-width: 3px;
-            border-style: outset;
-            border-color: white;
-            border-collapse: separate;
-            border-spacing: 5px;
-        }
-
-        .tr1
-        {
-            border: 30px;
-        }
-
-        .td1
-        {
-            border-width: 3px;
-            border-style: inset;
-            border-color: white;
-        }
-    </style>
-    <div id="test3">
-        <div class="game">
-            <table class="table1">
-                <tr class="tr1">
-                    <td class="td1">
-                        <table border="0" width="100%">
-                            <tr>
-                                <td>
-                                    <div id="score"></div>
-                                </td>
-                                <td width="1%">
-                                    <div id="smile"></div>
-                                </td>
-                                <td align="right">
-                                    <div id="timer" style="float: right;"></div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td1">
-                        <!--<div style="clear: left;"></div>-->
-
-                    <div class="field"></div>
-                </td>
-                </tr>
-            </table>
-        </div>
-        <div class="settings"></div>
-    </div>
+    <div id="game2"></div>
 
     <script type="text/javascript">
-        $.ready()
+        $(function ()
         {
             $("#game").sapper();
-        }
+
+        });
     </script>
 </body>
 </html>

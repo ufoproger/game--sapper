@@ -10,27 +10,23 @@ $.widget("my.smile", {
         {
             e.preventDefault();
 
-            if (e.which != 1)
-                return false;
-
-            self.element.addClass("smile_ok_checked");
+            if (e.which == 1)
+                self.element.addClass("smile_ok_checked");
         });
 
-        this.element.mouseup(function (e)
+        this.element.mouseup(function ()
         {
-            if (!self.element.hasClass("smile_ok_checked"))
-                return false;
-
-            self._setSmile("smile_ok");
-            self._trigger("click");
+            if (self.element.hasClass("smile_ok_checked"))
+            {
+                self._setSmile("smile_ok");
+                self._trigger("click");
+            }
         });
 
         this.element.mouseleave(function (e)
         {
             if (e.which == 1)
-            {
                 self.element.removeClass("smile_ok_checked");
-            }
         });
     },
 
@@ -110,6 +106,8 @@ $.widget("my.indicator", {
 
         this.options.value = _value;
         this._render();
+
+        return _value;
     }
 });
 
@@ -130,7 +128,7 @@ $.widget("my.sapper", {
 
         var self = this;
 
-        $(this.element).on("contextmenu", function (e)
+        $(this.element).on("contextmenu", function ()
         {
             return false;
         });
@@ -143,20 +141,51 @@ $.widget("my.sapper", {
             .append($("<div />", {class: "field"})))
             .append($("<div />", {class: "settings"}));
      */
-        $("#test3").children().appendTo(this.element);
-   //     $("#test2").children().appendTo(this.element.find(".information"));
-        $("#test").children().appendTo(this.element.find(".settings"));
-        $("#test").remove();
-        $("#test2").remove();
-        $("#score, #timer").indicator();
-        $("#smile").smile();
+    //    $("#test3").children().appendTo(this.element);
+//        $("#test").children().appendTo(this.element.find(".settings"));
+      //  $("#test").children().appendTo(this.element.find(".settings"));
 
-        $("#smile").bind("smileclick", function (e)
+        this.element
+            .append($("<div />", {class: "game"})
+                .append($("<table />", {class: "game"})
+                    .append($("<tr />", {class: "game"})
+                        .append($("<td />", {class: "game"})
+                            .append($("<table />", {class: "information"})
+                                .append($("<tr />")
+                                    .append($("<td />")
+                                        .append($("<div />", {class: "indicator_score"}))
+                                    )
+                                    .append($("<td />", {class: "information"})
+                                        .append($("<div />", {class: "button_smile"}))
+                                    )
+                                    .append($("<td />")
+                                        .append($("<div />", {class: "indicator_timer"}))
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    .append($("<tr />")
+                        .append($("<td />", {class: "game"})
+                            .append($("<div />", {class: "field"}))
+                        )
+                    )
+                )
+            )
+            .append($("<div />", {class: "settings"})
+        );
+
+
+        $("#test").children().appendTo($(".settings", this.element));
+        $("#test").remove();
+        $(".indicator_score, .indicator_timer", this.element).indicator();
+
+        $(".button_smile", this.element).smile().bind("smileclick", function ()
         {
-            self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
+            self._startGame($(".spinner_height", self.element).val(), $(".spinner_width", self.element).val(), $(".slider", self.element).slider("value"));
         });
 
-        $("#slider").slider(
+        $(".slider", this.element).slider(
             {
                 value: self._mines_count,
                 min: 10,
@@ -173,23 +202,23 @@ $.widget("my.sapper", {
                     }
             });
 
-        $("#spinner_height, #spinner_width").spinner({min: 10, max: 20});
-        $("#button_new_game").button();
+        $(".spinner_height, .spinner_width", this.element).spinner({min: 10, max: 20});
+        ;
 
-        $("#spinner_height").on("spin", function (e, ui)
+        $(".spinner_height", this.element).on("spin", function (e, ui)
         {
-            self._updateSliderValue(ui.value, $("#spinner_width").val());
+            self._updateSliderValue(ui.value, $(".spinner_width", self.element).val());
         });
 
-        $("#spinner_width").on("spin", function (e, ui)
+        $(".spinner_width", this.element).on("spin", function (e, ui)
         {
-            self._updateSliderValue($("#spinner_height").val(), ui.value);
+            self._updateSliderValue($(".spinner_height", self.element).val(), ui.value);
         });
 
-        $("#button_new_game").click(function ()
+        $(".button_new_game", this.element).button().click(function ()
         {
-            self._startGame($("#spinner_height").val(), $("#spinner_width").val(), $("#slider").slider("value"));
-            $("#smile").smile("unwah");
+            self._startGame($(".spinner_height", self.element).val(), $(".spinner_width", self.element).val(), $(".slider", self.element).slider("value"));
+            $(".button_smile", self.element).smile("unwah");
         });
 
         this._startGame(this._height, this._width, this._mines_count);
@@ -258,14 +287,9 @@ $.widget("my.sapper", {
         element.addClass(new_type);
     },
 
-    _inRange: function (value, left, right)
-    {
-        return (value >= left && value <= right);
-    },
-
     _walkAround: function (pos)
     {
-        var element = $("div.field_item[pos=" + pos + "]");
+        var element = $("div.field_item[pos=" + pos + "]", this.element);
 
         if (!this._isItemFieldFree(element))
             return;
@@ -312,19 +336,19 @@ $.widget("my.sapper", {
 
         if ($.inArray(pos, this._mines) != -1)
         {
-            $(".field_item.mine_flag").removeClass("mine_flag").addClass("mine_wrong_flag");
+            $(".field_item.mine_flag", this.element).removeClass("mine_flag").addClass("mine_wrong_flag");
 
             for (var index in this._mines)
             {
-                var element = $(".field_item[pos=" + this._mines[index] + "]");
+                var curr_element = $(".field_item[pos=" + this._mines[index] + "]", this.element);
 
-                if (element.hasClass("mine_wrong_flag"))
-                    this._setItemFieldType(element, "mine_flag")
+                if (curr_element.hasClass("mine_wrong_flag"))
+                    this._setItemFieldType(curr_element, "mine_flag")
                 else
-                    this._setItemFieldType(element, "mine");
+                    this._setItemFieldType(curr_element, "mine");
             }
 
-            this._setItemFieldType($(".field_item[pos=" + pos + "]"), "mine_checked");
+            this._setItemFieldType($(".field_item[pos=" + pos + "]", this.element), "mine_checked");
             this._gameOver(false);
 
             return;
@@ -341,7 +365,7 @@ $.widget("my.sapper", {
 
     _deleteGame: function ()
     {
-        $(".field > div").remove();
+        $(".field > div", this.element).remove();
         this._mines = [];
     },
 
@@ -355,42 +379,43 @@ $.widget("my.sapper", {
         this._width = _width;
         this._mines_count = _mines_count;
         this._updateSliderValue();
-        $("#score").indicator("value", _mines_count);
-        $("#timer").indicator("value", 0);
+        $(".indicator_score", this.element).indicator("value", _mines_count);
+        $(".indicator_timer", this.element).indicator("value", 0);
 
         for (var i = 0; i < this._height; ++i)
         {
             for (var j = 0; j < this._width; ++j)
-                $(".field").append($("<div />", {pos: i * this._width + j}).addClass("field_item mine_empty"));
+                $(".field", this.element).append($("<div />", {pos: i * this._width + j, class: "field_item mine_empty"}));
 
-            $(".field").append($("<div />").css("clear", "both"));
+
+            $(".field", this.element).append($("<div />").css("clear", "both"));
         }
 
-        $(".field").mouseleave(function (e)
+        $(".field", this.element).mouseleave(function (e)
         {
             if (e.which)
             {
                 self._mouse_button_pressed = false;
-                self._removeItemFieldCheckedTemp($(".field_item"));
-                $("#smile").smile("unwah");
+                self._removeItemFieldCheckedTemp($(".field_item", self.element));
+                $(".button_smile", self.element).smile("unwah");
             }
         });
 
-        $(".field").mouseenter(function (e)
+        $(".field", this.element).mouseenter(function (e)
         {
             if (e.which == 1)
             {
                 self._mouse_button_pressed = true;
-                $("#smile").smile("wah");
+                $(".button_smile", self.element).smile("wah");
             }
         });
 
-        $(".field_item").mousedown(function (e)
+        $(".field_item", this.element).mousedown(function (e)
         {
             e.preventDefault();
 
             self._mouse_button_pressed = true;
-            $("#smile").smile("wah");
+            $(".button_smile", self.element).smile("wah");
 
             if (this == e.target)
             {
@@ -407,11 +432,11 @@ $.widget("my.sapper", {
                 else
                     self._setItemFieldCheckedTemp(element);
 
-                $("#score").indicator("value", self._mines_count - $(".field_item.mine_flag").length);
+                $(".indicator_score", self.element).indicator("value", self._mines_count - $(".field_item.mine_flag", self.element).length);
             }
         });
 
-        $(".field_item").mousemove(function (e)
+        $(".field_item", this.element).mousemove(function (e)
         {
             e.preventDefault();
 
@@ -422,20 +447,20 @@ $.widget("my.sapper", {
             {
                 var element = $(e.target);
 
-                if (!self._isItemFieldCheckedTemp(element)/* && e.which == 1*/ && self._mouse_button_pressed)
+                if (!self._isItemFieldCheckedTemp(element) && self._mouse_button_pressed)
                 {
-                    self._removeItemFieldCheckedTemp($(".field_item"));
+                    self._removeItemFieldCheckedTemp($(".field_item", self.element));
                     self._setItemFieldCheckedTemp(element);
                 }
             }
         });
 
-        $(".field_item").mouseup(function (e)
+        $(".field_item", this.element).mouseup(function (e)
         {
             self._mouse_button_pressed = false;
-            $("#smile").smile("unwah");
+            $(".button_smile", self.element).smile("unwah");
             e.preventDefault();
-            self._removeItemFieldCheckedTemp($(".field_item"));
+            self._removeItemFieldCheckedTemp($(".field_item", self.element));
 
             if (e.which != 3 && this == e.target)
             {
@@ -448,16 +473,16 @@ $.widget("my.sapper", {
 
                     self._timer_id = setInterval(function ()
                     {
-                        $("#timer").indicator("inc");
+                        $(".indicator_timer", self.element).indicator("inc");
                     }, 1000);
                 }
 
                 self._clickToItemField(element);
             }
 
-            if ($(".field_item.mine_empty").length + $(".field_item.mine_question").length + $(".field_item.mine_flag").length == self._mines_count)
+            if ($(".field_item.mine_empty", self.element).length /*+ $(".field_item.mine_question", self.element).length*/ + $(".field_item.mine_flag", self.element).length == self._mines_count)
             {
-                self._setItemFieldType($(".field_item.mine_empty"), "mine_flag");
+                self._setItemFieldType($(".field_item.mine_empty", self.element), "mine_flag");
                 self._gameOver(true);
             }
         });
@@ -465,20 +490,20 @@ $.widget("my.sapper", {
 
     _gameOver: function (win)
     {
-        $(".field_item").off();
-        $(".field").off();
+        $(".field_item", this.element).off();
+        $(".field", this.element).off();
         clearInterval(this._timer_id);
 
-        var time = $("#timer").indicator("value");
+        var time = $(".indicator_timer", this.element).indicator("value");
 
         if (win)
         {
-            $("#smile").smile("cool");
+            $(".button_smile", this.element).smile("cool");
             alert("Вы победили! Вы достигли победы за " + time + " " + this._getWordByNumber(time, ["секунд", "секунду", "секунды"]) + "!");
         }
         else
         {
-            $("#smile").smile("die");
+            $(".button_smile", this.element).smile("die");
         }
     },
 
@@ -489,15 +514,15 @@ $.widget("my.sapper", {
         if (value != this._mines_count)
             word = "будет ";
 
-        $("#setting_mine_count").text(word + value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
+        $(".setting_mine_count", this.element).text(word + value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
     },
 
     _updateSliderValue: function (curr_height, curr_width)
     {
         var slider_max = (this._height * this._width * 0.9) | 0;
-        var slider_value = $("#slider").slider("value");
+        var slider_value = $(".slider", this.element).slider("value");
 
-        $("#slider").slider("option", "max", slider_max).slider("option", "value", Math.min(slider_value, slider_max));
+        $(".slider", this.element).slider("option", "max", slider_max).slider("option", "value", Math.min(slider_value, slider_max));
     },
 
     _getWordByNumber: function (num, words)
