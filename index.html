@@ -11,6 +11,7 @@
 </head>
 <body>
     <div id="game"></div>
+
     <div id="test">
         <table border="0">
             <tr>
@@ -52,11 +53,24 @@
         </table>
     </div>
 
+    <div id="test4">
+        <a href="#" id="link">ddd</a>
+    </div>
+
     <div id="game2"></div>
+    <div id="grid"></div>
 
     <script type="text/javascript">
+
         $(function ()
         {
+            $("#grid").field_grid().on("field_gridclick", function (e, t)
+            {
+                console.debug(e);
+                console.debug(t);
+            });
+
+
             $("#game").sapper();
 
         });

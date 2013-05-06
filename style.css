@@ -7,7 +7,7 @@ div.game
     float: left;
 }
 
-.settings
+div.settings
 {
     float: left;
     width: 200px;
@@ -26,14 +26,14 @@ div.game
     font-size: 0.8em;
 }
 
-.game_sapper
+div.game_sapper
 {
     background-color: #c0c0c0;
     padding: 5px;
     float: left;
 }
 
-.field
+div.field
 {
     float: left;
 }
@@ -259,4 +259,38 @@ table.information
 td.information
 {
     width: 1%;
+}
+
+.field_grid
+{
+    float: left;
+    border: 2px solid black;
+    background-color: #d3ffd1;
+    padding: 3px;
+}
+
+.field_grid_item
+{
+    float: left;
+    border: 1px solid black;
+    width: 9px;
+    height: 9px;
+    margin-bottom: -1px;
+    margin-right: -1px;
+    background-color: white;
+}
+
+.field_grid_item:hover
+{
+    background-color: dodgerblue;
+}
+
+.field_grid_item.hover_left
+{
+    background-color: goldenrod;
+}
+
+.field_grid_item.hover_right
+{
+    background-color: brown;
 }
