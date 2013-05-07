@@ -32,7 +32,8 @@ $.widget("my.field_grid", {
                 if (self._which != 1 && self._which != 3)
                     return;
 
-                var index = $(this).index("div.field_grid_item");
+                //var index = $(this).index("div.field_grid_item", self.element);
+                var index = grid_item.index(this);
                 var x = ((index / self._width) | 0) + 1;
                 var y = (index % self._height) + 1;
 
@@ -71,7 +72,7 @@ $.widget("my.field_grid", {
                 e.preventDefault();
             });
 
-        $(".field_grid", this.element).mouseleave(function (e)
+        $(".field_grid", this.element).mouseleave(function ()
         {
             self._which = 0;
         });
@@ -266,57 +267,81 @@ $.widget("my.sapper", {
                         )
                     )
                 )
+                .append($("<div />", {class: "setting_expander"})
+                    .append($("<a />", {href: "#"}).text("Открыть настройки"))
+                )
             )
             .append($("<div />", {class: "settings"})
-        );
+                .append($("<div />", {class: "align_center"})
+                    .append($("<div />", {class: "settings_label"}).text("Настройки"))
+                )
+                .append($("<div />", {class: "align_center_to_left"})
+                    .append($("<div />", {class: "align_center_to_right"})
+                        .append($("<div />", {class: "setting_grid"}))
+                        .append($("<div />").css("clear", "both"))
+                        .append($("<div />", {class: "grid_label"}))
+                    )
+                )
+            );
 
-
-        $("#test").children().appendTo($(".settings", this.element));
-        $("#test").remove();
+        $(".settings", this.element).hide();
         $(".indicator_score, .indicator_timer", this.element).indicator();
 
-        $(".button_smile", this.element).smile().bind("smileclick", function ()
+        $(".setting_expander", this.element).click(function (e)
         {
-            self._startGame($(".spinner_height", self.element).val(), $(".spinner_width", self.element).val(), $(".slider", self.element).slider("value"));
+            var settings = $(".settings", self.element);
+
+            e.preventDefault();
+
+            if (settings.is(":hidden"))
+            {
+                settings.show();
+                $(".setting_expander a", self.element).text("Закрыть настройки");
+            }
+            else
+            {
+                settings.hide();
+                $(".setting_expander a", self.element).text("Открыть настройки");
+            }
         });
 
-        $(".slider", this.element).slider(
+        $(".button_smile", this.element)
+            .smile()
+            .bind("smileclick", function ()
             {
-                value: self._mines_count,
-                min: 10,
-                max: 20,
-                change:
-                    function (e, ui)
-                    {
-                        self._updateSliderLabel(ui.value);
-                    },
-                slide:
-                    function (e, ui)
-                    {
-                        self._updateSliderLabel(ui.value);
-                    }
+                var grid = $(".setting_grid", self.element);
+
+                self._startGame(grid.field_grid("option", "height"), grid.field_grid("option", "width"), grid.field_grid("option", "count"));
             });
 
-        $(".spinner_height, .spinner_width", this.element).spinner({min: 10, max: 20});
-        ;
-
-        $(".spinner_height", this.element).on("spin", function (e, ui)
-        {
-            self._updateSliderValue(ui.value, $(".spinner_width", self.element).val());
-        });
-
-        $(".spinner_width", this.element).on("spin", function (e, ui)
-        {
-            self._updateSliderValue($(".spinner_height", self.element).val(), ui.value);
-        });
-
-        $(".button_new_game", this.element).button().click(function ()
-        {
-            self._startGame($(".spinner_height", self.element).val(), $(".spinner_width", self.element).val(), $(".slider", self.element).slider("value"));
-            $(".button_smile", self.element).smile("unwah");
-        });
+        $(".setting_grid", this.element)
+            .field_grid({width: this._width, height: this._height, count: this._mines_count})
+            .on("field_gridmousemove", function (e, ui)
+            {
+                self._updateFieldGridLabel(e, ui);
+            });
 
         this._startGame(this._height, this._width, this._mines_count);
+    },
+
+    _updateFieldGridLabel: function (e, ui)
+    {
+        var width, height, count;
+
+        if (ui == undefined)
+        {
+            width = this._width;
+            height =  this._height;
+            count = this._mines_count;
+        }
+        else
+        {
+            width = ui.width;
+            height = ui.height;
+            count = ui.count;
+        }
+
+        $(".grid_label", this.element).html("Поле <b>" + width + "x" + height + "</b>, <b>" + count + "</b> " + this._getWordByNumber(count, ["мин", "мина", "мины"]));
     },
 
     _isItemFieldFree: function (element)
@@ -438,7 +463,7 @@ $.widget("my.sapper", {
                 var curr_element = $(".field_item[pos=" + this._mines[index] + "]", this.element);
 
                 if (curr_element.hasClass("mine_wrong_flag"))
-                    this._setItemFieldType(curr_element, "mine_flag")
+                    this._setItemFieldType(curr_element, "mine_flag");
                 else
                     this._setItemFieldType(curr_element, "mine");
             }
@@ -466,7 +491,7 @@ $.widget("my.sapper", {
         this._height = _height;
         this._width = _width;
         this._mines_count = _mines_count;
-        this._updateSliderValue();
+        this._updateFieldGridLabel();
         $(".indicator_score", this.element).indicator("value", _mines_count);
         $(".indicator_timer", this.element).indicator("value", 0);
 
@@ -479,101 +504,100 @@ $.widget("my.sapper", {
             $(".field", this.element).append($("<div />").css("clear", "both"));
         }
 
-        $(".field", this.element).mouseleave(function (e)
-        {
-            if (e.which)
+        $(".field", this.element)
+            .mouseleave(function (e)
             {
-                self._mouse_button_pressed = false;
-                self._removeItemFieldCheckedTemp($(".field_item", self.element));
-                $(".button_smile", self.element).smile("unwah");
-            }
-        });
+                if (e.which)
+                {
+                    self._mouse_button_pressed = false;
+                    self._removeItemFieldCheckedTemp($(".field_item", self.element));
+                    $(".button_smile", self.element).smile("unwah");
+                }
+            })
+            .mouseenter(function (e)
+            {
+                if (e.which == 1)
+                {
+                    self._mouse_button_pressed = true;
+                    $(".button_smile", self.element).smile("wah");
+                }
+            });
 
-        $(".field", this.element).mouseenter(function (e)
-        {
-            if (e.which == 1)
+        $(".field_item", this.element)
+            .mousedown(function (e)
             {
+                e.preventDefault();
+
                 self._mouse_button_pressed = true;
                 $(".button_smile", self.element).smile("wah");
-            }
-        });
 
-        $(".field_item", this.element).mousedown(function (e)
-        {
-            e.preventDefault();
+                if (this == e.target)
+                {
+                    var element = $(e.target);
 
-            self._mouse_button_pressed = true;
-            $(".button_smile", self.element).smile("wah");
+                    if (e.which == 3)
+                    {
+                        var right_click_mines = ["mine_empty", "mine_flag", "mine_question"];
+                        var p = $.inArray(self._mine_types[self._getItemFieldType(element)], right_click_mines);
 
-            if (this == e.target)
+                        if (p != -1)
+                            self._setItemFieldType(element, right_click_mines[(p + 1) % 3]);
+                    }
+                    else
+                        self._setItemFieldCheckedTemp(element);
+
+                    $(".indicator_score", self.element).indicator("value", self._mines_count - $(".field_item.mine_flag", self.element).length);
+                }
+            })
+            .mousemove(function (e)
             {
-                var element = $(e.target);
+                e.preventDefault();
 
                 if (e.which == 3)
+                    return;
+
+                if (this == e.target)
                 {
-                    var right_click_mines = ["mine_empty", "mine_flag", "mine_question"];
-                    var p = $.inArray(self._mine_types[self._getItemFieldType(element)], right_click_mines);
+                    var element = $(e.target);
 
-                    if (p != -1)
-                        self._setItemFieldType(element, right_click_mines[(p + 1) % 3]);
-                }
-                else
-                    self._setItemFieldCheckedTemp(element);
-
-                $(".indicator_score", self.element).indicator("value", self._mines_count - $(".field_item.mine_flag", self.element).length);
-            }
-        });
-
-        $(".field_item", this.element).mousemove(function (e)
-        {
-            e.preventDefault();
-
-            if (e.which == 3)
-                return;
-
-            if (this == e.target)
-            {
-                var element = $(e.target);
-
-                if (!self._isItemFieldCheckedTemp(element) && self._mouse_button_pressed)
-                {
-                    self._removeItemFieldCheckedTemp($(".field_item", self.element));
-                    self._setItemFieldCheckedTemp(element);
-                }
-            }
-        });
-
-        $(".field_item", this.element).mouseup(function (e)
-        {
-            self._mouse_button_pressed = false;
-            $(".button_smile", self.element).smile("unwah");
-            e.preventDefault();
-            self._removeItemFieldCheckedTemp($(".field_item", self.element));
-
-            if (e.which != 3 && this == e.target)
-            {
-                var element = $(e.target);
-                var pos = Number(element.attr("pos"));
-
-                if (self._mines.length == 0)
-                {
-                    self._generateMines(pos);
-
-                    self._timer_id = setInterval(function ()
+                    if (!self._isItemFieldCheckedTemp(element) && self._mouse_button_pressed)
                     {
-                        $(".indicator_timer", self.element).indicator("inc");
-                    }, 1000);
+                        self._removeItemFieldCheckedTemp($(".field_item", self.element));
+                        self._setItemFieldCheckedTemp(element);
+                    }
+                }
+            })
+            .mouseup(function (e)
+            {
+                self._mouse_button_pressed = false;
+                $(".button_smile", self.element).smile("unwah");
+                e.preventDefault();
+                self._removeItemFieldCheckedTemp($(".field_item", self.element));
+
+                if (e.which != 3 && this == e.target)
+                {
+                    var element = $(e.target);
+                    var pos = Number(element.attr("pos"));
+
+                    if (self._mines.length == 0)
+                    {
+                        self._generateMines(pos);
+
+                        self._timer_id = setInterval(function ()
+                        {
+                            $(".indicator_timer", self.element).indicator("inc");
+                        }, 1000);
+                    }
+
+                    self._clickToItemField(element);
                 }
 
-                self._clickToItemField(element);
-            }
-
-            if ($(".field_item.mine_empty", self.element).length /*+ $(".field_item.mine_question", self.element).length*/ + $(".field_item.mine_flag", self.element).length == self._mines_count)
-            {
-                self._setItemFieldType($(".field_item.mine_empty", self.element), "mine_flag");
-                self._gameOver(true);
-            }
-        });
+                if ($(".field_item.mine_empty", self.element).length /*+ $(".field_item.mine_question", self.element).length*/ + $(".field_item.mine_flag", self.element).length == self._mines_count)
+                {
+                    self._setItemFieldType($(".field_item.mine_empty", self.element), "mine_flag");
+                    self._gameOver(true);
+                }
+            });
     },
 
     _gameOver: function (win)
@@ -593,24 +617,6 @@ $.widget("my.sapper", {
         {
             $(".button_smile", this.element).smile("die");
         }
-    },
-
-    _updateSliderLabel: function (value)
-    {
-        var word = "";
-
-        if (value != this._mines_count)
-            word = "будет ";
-
-        $(".setting_mine_count", this.element).text(word + value + " " + this._getWordByNumber(value, ["мин", "мина", "мины"]));
-    },
-
-    _updateSliderValue: function (curr_height, curr_width)
-    {
-        var slider_max = (this._height * this._width * 0.9) | 0;
-        var slider_value = $(".slider", this.element).slider("value");
-
-        $(".slider", this.element).slider("option", "max", slider_max).slider("option", "value", Math.min(slider_value, slider_max));
     },
 
     _getWordByNumber: function (num, words)

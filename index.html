@@ -11,109 +11,10 @@
 </head>
 <body>
     <div id="game"></div>
-
-    <style>
-        .align_center
-        {
-            position: relative;
-            width: 100%;
-        }
-        .align_center:after
-        {
-            content: '';
-            display: block;
-            clear: both;
-        }
-        .align_center_to_left
-        {
-            position: relative;
-            right: 50%;
-            float: right;
-        }
-        .align_center_to_right
-        {
-            position: relative;
-            z-index: 1;
-            right: -50%;
-    </style>
-
-    <div id="test">
-        <div  style=" border: 1px solid red;" class="align_center">
-            <div style="text-align: center; font-weight: bold;">
-                Настройки
-            </div>
-            <div class="align_center_to_left">
-                <div class="align_center_to_right">
-                    <div id="grid"></div>
-                    <div style="clear:both;"></div>
-
-                    <div class="dsd" style="text-align: center;">fdsfsd sd sdfs</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <div id="test44">
-        <table border="0">
-            <tr>
-                <td colspan="2" align="center">
-                   <b> Игра "Сапёр"</b>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Высота
-                </td>
-                <td width="10%">
-                    <input class="spinner_height" value="10" readonly />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Ширина
-                </td>
-                <td>
-                    <input class="spinner_width" value="10" readonly />
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    На поле <span class="setting_mine_count">?</span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="slider"></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" align="center">
-                    <button class="button_new_game">Начать новую игру!</button>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <div id="test4">
-        <a href="#" id="link">ddd</a>
-    </div>
-
-    <div id="game2"></div>
-    <!--<div id="grid"></div>-->
-
     <script type="text/javascript">
-
         $(function ()
         {
-            $("#grid").field_grid({width: 13}).on("field_gridmousemove", function (e, ui)
-            {
-                $(".dsd").html("Поле <b>" + ui.width + "x" + ui.height + "</b>, <b>" + ui.count + "</b> мин");
-                console.debug(ui);
-            });
-
-
             $("#game").sapper();
-
         });
     </script>
 </body>

@@ -4,13 +4,15 @@ body, html
 
 div.game
 {
+    position: relative;
     float: left;
+    z-index: 1;
 }
 
 div.settings
 {
     float: left;
-    width: 200px;
+    width: 170px;
     margin-left: 10px;
     font-size: 0.9em;
 }
@@ -280,7 +282,6 @@ td.information
     background-color: white;
 }
 
-
 .field_grid_item.hover_left
 {
     background-color: goldenrod;
@@ -290,9 +291,47 @@ td.information
 {
     background-color: brown;
 }
-/*
-.field_grid_item:hover
+
+.align_center
 {
-    background-color: dodgerblue;
+    position: relative;
+    width: 100%;
 }
-*/
+.align_center:after
+{
+    content: '';
+    display: block;
+    clear: both;
+}
+.align_center_to_left
+{
+    position: relative;
+    right: 50%;
+    float: right;
+}
+.align_center_to_right
+{
+    position: relative;
+    right: -50%;
+}
+
+.settings_label
+{
+    text-align: center;
+    font-weight: bold;
+    font-size: 12pt;
+    margin: 4px;
+}
+
+.grid_label
+{
+    font-size: 10pt;
+    text-align: center;
+}
+
+.setting_expander
+{
+    text-align: center;
+    font-size: 8pt;
+    margin: 4px 0 0 0;
+}
