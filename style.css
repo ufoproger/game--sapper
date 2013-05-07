@@ -308,9 +308,11 @@ td.information
     position: relative;
     right: 50%;
     float: right;
+
 }
 .align_center_to_right
 {
+
     position: relative;
     right: -50%;
 }

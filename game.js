@@ -27,15 +27,14 @@ $.widget("my.field_grid", {
         var grid_item = $(".field_grid_item", this.element);
 
         grid_item
-            .mousemove(function (e)
+            .mouseenter(function (e)
             {
                 if (self._which != 1 && self._which != 3)
                     return;
 
-                //var index = $(this).index("div.field_grid_item", self.element);
                 var index = grid_item.index(this);
                 var x = ((index / self._width) | 0) + 1;
-                var y = (index % self._height) + 1;
+                var y = (index % self._width) + 1;
 
                 grid_item.removeClass("hover_left hover_right");
 
@@ -46,7 +45,7 @@ $.widget("my.field_grid", {
                 }
 
                 if (self._which == 3)
-                    self.options.count = (x - 1) * self.options.height + y;
+                    self.options.count = (x - 1) * self.options.width + y;
 
                 var max_count = self.options.height * self.options.width;
 
@@ -57,20 +56,17 @@ $.widget("my.field_grid", {
             .mousedown(function (e)
             {
                 self._which = e.which;
-                self._render();
+                $(this).trigger("mouseenter");
             })
             .mouseup(function ()
             {
                 self._which = 0;
             })
-            .contextmenu(function ()
-            {
-                return false;
-            })
             .mousedown(function (e)
             {
                 e.preventDefault();
-            });
+            })
+            .contextmenu(false);
 
         $(".field_grid", this.element).mouseleave(function ()
         {
@@ -235,10 +231,7 @@ $.widget("my.sapper", {
 
         var self = this;
 
-        $(this.element).on("contextmenu", function ()
-        {
-            return false;
-        });
+        $(this.element).contextmenu(false);
 
         this.element.addClass("game_sapper");
         this.element
@@ -385,9 +378,7 @@ $.widget("my.sapper", {
     },
 
     _generateMines: function (pos)
-{
-    //       mines = [106, 12, 78, 50, 359, 352, 144, 287, 272, 223];
-//        return;
+    {
         while (this._mines.length < this._mines_count)
         {
             var mine_pos = ((Math.random() * 100000) | 0) % (this._width * this._height);
@@ -395,8 +386,6 @@ $.widget("my.sapper", {
             if (mine_pos != pos && $.inArray(mine_pos, this._mines) == -1)
                 this._mines.push(mine_pos);
         }
-
-//        console.debug(this._mines);
     },
 
     _setItemFieldType: function (element, new_type)
@@ -516,7 +505,7 @@ $.widget("my.sapper", {
             })
             .mouseenter(function (e)
             {
-                if (e.which == 1)
+                if (e.which)
                 {
                     self._mouse_button_pressed = true;
                     $(".button_smile", self.element).smile("wah");
@@ -549,7 +538,7 @@ $.widget("my.sapper", {
                     $(".indicator_score", self.element).indicator("value", self._mines_count - $(".field_item.mine_flag", self.element).length);
                 }
             })
-            .mousemove(function (e)
+            .mouseenter(function (e)
             {
                 e.preventDefault();
 
