@@ -45,7 +45,12 @@ $.widget("my.field_grid", {
                 }
 
                 if (self._which == 3)
+                {
                     self.options.count = (x - 1) * self.options.width + y;
+
+                    if (y > self.options.width)
+                        self.options.count -= y - self.options.width;
+                }
 
                 var max_count = self.options.height * self.options.width;
 
