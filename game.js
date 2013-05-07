@@ -1,94 +1,106 @@
 $.widget("my.field_grid", {
+    options:
+    {
+        width: 10,
+        height: 10,
+        count: 10
+    },
+
     _create: function ()
     {
         this._height = 15;
         this._width = 15;
-
-        this.element.append($("<div />", {class: "field_grid"}));
+        this._min_q = 0.1;
+        this._max_q = 0.9;
+        this._which = 0;
+        this.element.addClass("field_grid");
 
         for (var i = 0; i < this._height; ++i)
         {
             for (var j = 0; j < this._width; ++j)
-                $(".field_grid", this.element).append($("<div />", {class: "field_grid_item"}));
+                this.element.append($("<div />", {class: "field_grid_item"}));
 
-            $(".field_grid", this.element).append($("<div />", {style: "clear: both;"}));
+            this.element.append($("<div />", {style: "clear: both;"}));
         }
 
         var self = this;
         var grid_item = $(".field_grid_item", this.element);
 
-        this._which = 0;
-
-        grid_item.mousemove(function (e)
-        {
-            var index = $(this).index(".field_grid_item");
-
-            $(".field_grid_item", self.element).removeClass("hover_left hover_right");
-
-            if (self._which == 1)
-                self._showLeftButton(index);
-
-            if (self._which == 3)
-                self._showRightButton(index);
-        });
-
-        grid_item.mousedown(function (e)
-        {
-            self._which = e.which;
-
-            $(this).trigger("mousemove");
-        });
-
-        grid_item.mouseup(function (e)
-        {
-            var index = $(this).index(".field_grid_item");
-            var data = {which: e.which};
-
-            if (e.which == 1)
+        grid_item
+            .mousemove(function (e)
             {
-                data.height = (index / self._width) | 0;
-                data.width = index - data.height * self._width;
-            }
-            else
-                data.count = index + 1;
+                if (self._which != 1 && self._which != 3)
+                    return;
 
+                var index = $(this).index("div.field_grid_item");
+                var x = ((index / self._width) | 0) + 1;
+                var y = (index % self._height) + 1;
+
+                grid_item.removeClass("hover_left hover_right");
+
+                if (self._which == 1)
+                {
+                    self.options.height = Math.max(x, 9);
+                    self.options.width = Math.max(y, 9);
+                }
+
+                if (self._which == 3)
+                    self.options.count = (x - 1) * self.options.height + y;
+
+                var max_count = self.options.height * self.options.width;
+
+                self.options.count = Math.max((max_count * self._min_q) | 0, Math.min((max_count * self._max_q) | 0, self.options.count));
+                self._trigger("mousemove", e, {width: self.options.width, height: self.options.height, count: self.options.count});
+                self._render();
+            })
+            .mousedown(function (e)
+            {
+                self._which = e.which;
+                self._render();
+            })
+            .mouseup(function ()
+            {
+                self._which = 0;
+            })
+            .contextmenu(function ()
+            {
+                return false;
+            })
+            .mousedown(function (e)
+            {
+                e.preventDefault();
+            });
+
+        $(".field_grid", this.element).mouseleave(function (e)
+        {
             self._which = 0;
-            $(grid_item).removeClass("hover_left hover_right")
-
-            self._trigger("click", e, data);
         });
 
-        grid_item.contextmenu(function (e)
-        {
-            return false;
-        });
-        grid_item.mousedown(function (e)
-        {
-            e.preventDefault();
-        });
-
-        $(".grid", this.element).mouseleave(function (e)
-        {
-            self._which = 0;
-            $(grid_item).removeClass("hover_left hover_right");
-        });
+        this._render();
     },
 
-    _showLeftButton: function (index)
+    _render: function ()
     {
-        var height = (index / this._width) | 0;
-        var width = index - height * this._width;
+        for (var i = 0; i < this.options.height; ++i)
+            for (var j = 0; j < this.options.width; ++j)
+                this._markFieldGridItem(i * this._height + j, true);
 
-        for (var i = 0; i <= height; ++i)
-            for (var j = 0; j <= width; ++j)
-                $(".field_grid_item:eq(" + (i * this._height + j) + ")", this.element).addClass("hover_left");
+        for (var i = 0, l = (this.options.count / this.options.width) | 0; i < l; ++i)
+            for (var j = 0; j < this.options.width; ++j)
+                this._markFieldGridItem(i * this._height + j);
 
+        for (var j = 0, i = (this.options.count / this.options.width) | 0, l = this.options.count % this.options.width; j < l; ++j)
+            this._markFieldGridItem(i * this._height + j);
     },
 
-    _showRightButton: function (index)
+    _markFieldGridItem: function (index, is_left)
     {
-        $(".field_grid_item:lt(" + index + ")", this.element).addClass("hover_right");
-        $(".field_grid_item:eq(" + index + ")", this.element).addClass("hover_right");
+        var element = $(".field_grid_item:eq(" + index + ")", this.element);
+
+        if (is_left == undefined || is_left != true)
+            element.removeClass("hover_left").addClass("hover_right");
+        else
+            element.addClass("hover_left");
     }
 });
 
@@ -114,10 +126,6 @@ $.widget("my.smile", {
             {
                 self._setSmile("smile_ok");
                 self._trigger("click");
-/*        var now2 = new Date();
-
-        console.time("walkAround: end", now2.getSeconds(), now2.getMilliseconds());
-  */
             }
         });
 
