@@ -1,7 +1,3 @@
-body, html
-{
-}
-
 div.game
 {
     position: relative;
@@ -15,17 +11,6 @@ div.settings
     width: 170px;
     margin-left: 10px;
     font-size: 0.9em;
-}
-
-.slider
-{
-    margin: 2px 10px 10px 10px;
-}
-
-.spinner_height, .spinner_width
-{
-    width: 60px;
-    font-size: 0.8em;
 }
 
 div.game_sapper
@@ -48,87 +33,87 @@ div.field
     float: left;
 }
 
-.mine_count_1
+.field_item.mine_count_1
 {
     background-position: -32px 0;
 }
 
-.mine_count_2
+.field_item.mine_count_2
 {
     background-position: -48px 0;
 }
 
-.mine_count_3
+.field_item.mine_count_3
 {
     background-position: -64px 0;
 }
 
-.mine_count_4
+.field_item.mine_count_4
 {
     background-position: -80px 0;
 }
 
-.mine_count_5
+.field_item.mine_count_5
 {
     background-position: -96px 0;
 }
 
-.mine_count_6
+.field_item.mine_count_6
 {
     background-position: -112px 0;
 }
 
-.mine_count_7
+.field_item.mine_count_7
 {
     background-position: -128px 0;
 }
 
-.mine_count_8
+.field_item.mine_count_8
 {
     background-position: -144px 0;
 }
 
-.mine_empty
+.field_item.mine_empty
 {
     background-position: 0 0;
 }
 
-.mine_empty_checked
+.field_item.mine_empty_checked
 {
     background-position: -16px 0;
 }
 
-.mine_empty_checked_temp
+.field_item.mine_empty_checked_temp
 {
     background-position: -16px 0;
 }
 
-.mine
+.field_item.mine
 {
     background-position: -160px 0;
 }
 
-.mine_checked
+.field_item.mine_checked
 {
     background-position: -176px 0;
 }
 
-.mine_flag
+.field_item.mine_flag
 {
     background-position: -192px 0;
 }
 
-.mine_question
+.field_item.mine_question
 {
     background-position: -208px 0;
 }
 
-.mine_question_checked_temp
+.field_item.mine_question_checked_temp
 {
     background-position: -224px 0;
 }
 
-.mine_wrong_flag
+.field_item.mine_wrong_flag
 {
     background-position: -240px 0;
 }
@@ -147,52 +132,52 @@ div.field
     float: left;
 }
 
-.digit_0
+.digits.digit_0
 {
     background-position: -13px 0;
 }
 
-.digit_1
+.digits.digit_1
 {
     background-position: -26px 0;
 }
 
-.digit_2
+.digits.digit_2
 {
     background-position: -39px 0;
 }
 
-.digit_3
+.digits.digit_3
 {
     background-position: -52px 0;
 }
 
-.digit_4
+.digits.digit_4
 {
     background-position: -65px 0;
 }
 
-.digit_5
+.digits.digit_5
 {
     background-position: -78px 0;
 }
 
-.digit_6
+.digits.digit_6
 {
     background-position: -91px 0;
 }
 
-.digit_7
+.digits.digit_7
  {
      background-position: -104px 0;
  }
 
-.digit_8
+.digits.digit_8
 {
     background-position: -117px 0;
 }
 
-.digit_9
+.digits.digit_9
 {
     background-position: -130px 0;
 }
@@ -205,27 +190,27 @@ div.field
     float:left;
 }
 
-.smile_ok
+.smile.smile_ok
 {
     background-position: 0 0;
 }
 
-.smile_die
+.smile.smile_die
 {
     background-position: -52px 0;
 }
 
-.smile_cool
+.smile.smile_cool
 {
     background-position: -78px 0;
 }
 
-.smile_wah
+.smile.smile_wah
 {
     background-position: -26px 0;
 }
 
-.smile_ok_checked
+.smile.smile_ok_checked
 {
     background-position: -104px 0;
 }

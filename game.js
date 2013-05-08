@@ -391,6 +391,7 @@ $.widget("my.sapper", {
             if (mine_pos != pos && $.inArray(mine_pos, this._mines) == -1)
                 this._mines.push(mine_pos);
         }
+        console.debug(this._mines);
     },
 
     _setItemFieldType: function (element, new_type)
