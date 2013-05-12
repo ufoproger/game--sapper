@@ -310,6 +310,8 @@ $.widget("my.sapper", {
                 var grid = $(".setting_grid", self.element);
 
                 self._startGame(grid.field_grid("option", "height"), grid.field_grid("option", "width"), grid.field_grid("option", "count"));
+                $(".settings", self.element).hide();
+                $(".setting_expander a", self.element).text("Открыть настройки");
             });
 
         $(".setting_grid", this.element)
